@@ -1,0 +1,16 @@
+# Local configuration.
+/.env
+
+# composer files/dirs
+/vendor
+
+# OS-specific crud
+Thumbs.db
+desktop.ini
+
+# Bower and node directories
+node_modules
+bower_components
+
+# dev env
+.vs

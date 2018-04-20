@@ -1,0 +1,6 @@
+{
+    "require": {
+        "northwoods/config": "^2.0",
+        "josegonzalez/dotenv": "^3.2"
+    }
+}
