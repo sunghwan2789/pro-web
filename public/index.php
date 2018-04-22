@@ -45,12 +45,10 @@ foreach (array_reverse($middleware) as $mw) {
 
 
 $app->get('/', App\Controllers\HomeController::class . ':index');
-$app->group('/session', function () {
-    $this->get('/login', App\Controllers\SessionController::class . ':login')->setName('session.login');
-    $this->post('/signin', App\Controllers\SessionController::class . ':signin')->setName('session.signin');
-    $this->post('/register', App\Controllers\SessionController::class . ':register')->setName('session.register');
-    $this->get('/logout', App\Controllers\SessionController::class . ':logout')->setName('session.logout');
-});
+$app->get('/login', App\Controllers\SessionController::class . ':login')->setName('login');
+$app->post('/login', App\Controllers\SessionController::class . ':store')->setName('session.store');
+$app->post('/register', App\Controllers\SessionController::class . ':register')->setName('session.register');
+$app->get('/logout', App\Controllers\SessionController::class . ':destroy')->setName('logout');
 $app->group('/activity', function () {
     $this->get('/', App\Controllers\ActivityController::class . ':index');
     $this->get('/new', App\Controllers\ActivityController::class . ':new')->setName('activity.new');

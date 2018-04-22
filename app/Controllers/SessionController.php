@@ -16,11 +16,15 @@ class SessionController
     /** @var \Slim\Views\PhpRenderer */
     protected $view;
 
+    /** @var \Slim\Router */
+    protected $router;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->db = $container['db'];
         $this->view = $container['view'];
+        $this->router = $container['router'];
     }
 
     public function login(Request $request, Response $response)
@@ -35,11 +39,15 @@ class SessionController
             session_write_close();
         }
 
-        $this->view->render($response, 'session/login.phtml');
+        $params = $request->getQueryParams();
+        $this->view->render($response, 'session/login.phtml', [
+            'registered' => isset($params['registered']),
+            'return' => strval($params['return']),
+        ]);
         return $response;
     }
 
-    public function signin(Request $request, Response $response)
+    public function store(Request $request, Response $response)
     {
         if (isset($_COOKIE[session_name()]))
         {
@@ -65,10 +73,15 @@ class SessionController
 
         if ($pw === false) {
             throw new \Exception('id does not exist');
-        } elseif (is_null($pw)) {
-            $this->view->render($response, 'session/signin.phtml');
+        }
+        if (is_null($pw)) {
+            $this->view->render($response, 'session/register.phtml', [
+                'return' => strval($body['return']),
+                'id' => strval($body['id']),
+            ]);
             return $response;
-        } elseif (!hash_equals($pw, crypt(static::encrypt(strval($body['pw'])), $pw))) {
+        }
+        if (!hash_equals($pw, crypt(static::encrypt(strval($body['pw'])), $pw))) {
             throw new \Exception('pw is wrong');
         }
 
@@ -128,10 +141,10 @@ class SessionController
 
         return $response
             ->withStatus(303)
-            ->withHeader('Location', strval($_POST['return']));
+            ->withHeader('Location', $this->router->pathFor('login') . '?registered=1&return=' . \rawurlencode(strval($_POST['return'])));
     }
 
-    public function logout(Request $request, Response $response)
+    public function destroy(Request $request, Response $response)
     {
         if (isset($_COOKIE[session_name()]))
         {

@@ -32,13 +32,12 @@ class Authenticate
             return $next($request, $response);
         }
 
-        $loginUrl = $this->router->pathFor('session.login');
+        $loginUrl = $this->router->pathFor('login');
 
         $whitelist = [
             $loginUrl,
-            $this->router->pathFor('session.signin'),
+            $this->router->pathFor('session.store'),
             $this->router->pathFor('session.register'),
-            $this->router->pathFor('session.logout'),
         ];
 
         // 로그인 페이지 접속 중이면 통과
@@ -49,7 +48,7 @@ class Authenticate
         // 손님은 로그인 페이지로 안내
         return $response
             ->withStatus(303)
-            ->withHeader('Location', $loginUrl);
+            ->withHeader('Location', $loginUrl . '?return=' . \rawurlencode($request->getRequestTarget()));
     }
 
     /**
