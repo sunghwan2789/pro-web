@@ -5,7 +5,7 @@ use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
-class HomeController extends Controller
+class HomeController
 {
     /** @var \Psr\Container\ContainerInterface */
     protected $container;
