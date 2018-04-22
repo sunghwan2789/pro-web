@@ -133,6 +133,16 @@ class SessionController
 
     public function logout(Request $request, Response $response)
     {
+        if (isset($_COOKIE[session_name()]))
+        {
+            session_start();
+            $_SESSION = [];
+            setcookie(session_name(), null, -1,
+                '/', $request->getUri()->getHost(),
+                false, true);
+            session_destroy();
+        }
+        $this->view->render($response, 'session/logout.phtml');
         return $response;
     }
 
