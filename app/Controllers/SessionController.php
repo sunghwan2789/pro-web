@@ -25,12 +25,32 @@ class SessionController
 
     public function login(Request $request, Response $response)
     {
+        if (isset($_COOKIE[session_name()]))
+        {
+            session_start();
+            if (isset($_SESSION['uid']))
+            {
+                throw new \Exception('already logged in');
+            }
+            session_write_close();
+        }
+
         $this->view->render($response, 'session/login.phtml');
         return $response;
     }
 
     public function signin(Request $request, Response $response)
     {
+        if (isset($_COOKIE[session_name()]))
+        {
+            session_start();
+            if (isset($_SESSION['uid']))
+            {
+                throw new \Exception('already logged in');
+            }
+            session_write_close();
+        }
+
         $uri = $request->getUri();
         $body = $request->getParsedBody();
         // TODO: 에러 처리
@@ -73,6 +93,16 @@ class SessionController
 
     public function register(Request $request, Response $response)
     {
+        if (isset($_COOKIE[session_name()]))
+        {
+            session_start();
+            if (isset($_SESSION['uid']))
+            {
+                throw new \Exception('already logged in');
+            }
+            session_write_close();
+        }
+
         if ($_POST['pw'] !== $_POST['pwc']) {
             throw new \Exception('pw does not equal to pwc');
         }
