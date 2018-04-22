@@ -51,6 +51,14 @@ $app->group('/session', function () {
     $this->post('/register', App\Controllers\SessionController::class . ':register')->setName('session.register');
     $this->get('/logout', App\Controllers\SessionController::class . ':logout')->setName('session.logout');
 });
+$app->group('/activity', function () {
+    $this->get('/', App\Controllers\ActivityController::class . ':index');
+    $this->get('/new', App\Controllers\ActivityController::class . ':new')->setName('activity.new');
+    $this->post('/post', App\Controllers\ActivityController::class . ':post')->setName('activity.post');
+    $this->get('/{activityNumber}', App\Controllers\ActivityController::class . ':show');
+    $this->post('/{activityNumber}/edit', App\Controllers\ActivityController::class . ':edit');
+    $this->post('/{activityNumber}/delete', App\Controllers\ActivityController::class . ':delete');
+});
 
 
 $app->run();
