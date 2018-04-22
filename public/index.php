@@ -36,13 +36,20 @@ $container['view'] = function ($c) {
 };
 
 
-$app->add(App\Middleware\CheckValidUser::class);
-$app->add(App\Middleware\Authenticate::class);
+$middleware = [
+    App\Middleware\Authenticate::class,
+];
+foreach (array_reverse($middleware) as $mw) {
+    $app->add($mw);
+}
 
 
 $app->get('/', App\Controllers\HomeController::class . ':index');
-$app->group('/auth', function () {
-    $this->post('/login', App\Controllers\AuthController::class . ':login')->setName('auth-login');
+$app->group('/session', function () {
+    $this->get('/login', App\Controllers\SessionController::class . ':login')->setName('session.login');
+    $this->post('/signin', App\Controllers\SessionController::class . ':signin')->setName('session.signin');
+    $this->post('/register', App\Controllers\SessionController::class . ':register')->setName('session.register');
+    $this->get('/logout', App\Controllers\SessionController::class . ':logout')->setName('session.logout');
 });
 
 

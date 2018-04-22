@@ -96,7 +96,7 @@ if ($initiated):
 <?php
 endif;
 ?>
-    <form action="<?=$router->pathFor('auth-login')?>" method="POST">
+    <form action="<?=$router->pathFor('session.login')?>" method="POST">
         <input name="return" type="hidden" value="<?=htmlentities($_SERVER['REQUEST_URI'])?>">
         <input name="id" type="text" placeholder="아이디">
         <input name="pw" type="password" placeholder="비밀번호">
