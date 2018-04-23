@@ -27,6 +27,7 @@ class SessionController
         $this->router = $container['router'];
     }
 
+    /** GET /login */
     public function login(Request $request, Response $response)
     {
         $get = $request->getQueryParams();
@@ -37,6 +38,7 @@ class SessionController
         return $response;
     }
 
+    /** POST /login */
     public function store(Request $request, Response $response)
     {
         $uri = $request->getUri();
@@ -84,6 +86,7 @@ class SessionController
             ->withHeader('Location', strval($post['return']));
     }
 
+    /** POST /register */
     public function register(Request $request, Response $response)
     {
         if ($_POST['pw'] !== $_POST['pwc']) {
@@ -111,9 +114,12 @@ class SessionController
 
         return $response
             ->withStatus(303)
-            ->withHeader('Location', $this->router->pathFor('login') . '?registered=1&return=' . \rawurlencode(strval($_POST['return'])));
+            ->withHeader('Location',
+                $this->router->pathFor('login')
+                . '?registered=1&return=' . \rawurlencode(strval($_POST['return'])));
     }
 
+    /** GET /logout */
     public function destroy(Request $request, Response $response)
     {
         if (isset($_COOKIE[session_name()]))
