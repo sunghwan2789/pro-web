@@ -55,13 +55,26 @@ $app->group('/activities', function () {
     $this->get('/archive[/{year}[/{month}[/{date}]]]', App\Controllers\ActivitiesController::class . ':list')->setName('activity.list');
     $this->get('/{activityId}', App\Controllers\ActivitiesController::class . ':show')->setName('activity.show');
     $this->get('/{activityId}/edit', App\Controllers\ActivitiesController::class . ':edit');
-    $this->post('/{activityId}/edit', App\Controllers\ActivitiesController::class . ':update');
-    $this->post('/{activityId}/delete', App\Controllers\ActivitiesController::class . ':delete');
+    $this->post('/{activityId}/put', App\Controllers\ActivitiesController::class . ':update');
+    $this->post('/{activityId}/delete', App\Controllers\ActivitiesController::class . ':destroy');
 });
 $app->group('/tasks', function () {
     $this->get('', App\Controllers\TasksController::class . ':index')->setName('task.index');
-    $this->get('/{taskId}/submissions', App\Controllers\TasksController::class . ':');
-    $this->post('/{taskId}/submit', App\Controllers\TasksController::class . ':submit');
+    $this->get('/new', App\Controllers\TasksController::class . ':new')->setName('task.new');
+    $this->post('/new', App\Controllers\TasksController::class . ':store')->setName('task.store');
+    $this->get('/{taskId}', App\Controllers\TasksController::class . ':show')->setName('task.show');
+    $this->get('/{taskId}/edit', App\Controllers\TasksController::class . ':edit');
+    $this->post('/{taskId}/put', App\Controllers\TasksController::class . ':update');
+    $this->post('/{taskId}/delete', App\Controllers\TasksController::class . ':destroy');
+});
+$app->group('/sources', function () {
+    $this->get('', App\Controllers\SourcesController::class . ':index')->setName('source.index');
+    $this->get('/new[/{taskId}]', App\Controllers\SourcesController::class . ':new');
+    $this->post('/new[/{taskId}]', App\Controllers\SourcesController::class . ':store');
+    $this->get('/{sourceId}', App\Controllers\SourcesController::class . ':show');
+    $this->post('/{sourceId}/vote', App\Controllers\SourcesController::class . ':voteup');
+    $this->post('/{sourceId}/vote/delete', App\Controllers\SourcesController::class . ':votedown');
+    $this->get('/search', App\Controllers\SourcesController::class . ':search');
 });
 
 
