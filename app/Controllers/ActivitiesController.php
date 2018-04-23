@@ -130,4 +130,45 @@ class ActivitiesController
                 'activityId' => $activityId,
             ]));
     }
+
+    /** GET /{activityId} */
+    public function show(Request $request, Response $response, array $args)
+    {
+        $query = $this->db->prepare(
+            'SELECT `start`, `end`, purpose, content, place '
+            . 'FROM pro_activities '
+            . 'WHERE idx = ?'
+        );
+        $query->bindValue(1, $args['activityId']);
+        $query->execute();
+        $activity = $query->fetch();
+
+        if ($activity === false) {
+            throw new \Exception('not found');
+        }
+
+        $query = $this->db->prepare(
+            'SELECT c.gen, c.name '
+            . 'FROM pro_activity_attend b '
+            . 'LEFT JOIN pro_members c ON (b.uid = c.id) '
+            . 'WHERE b.aid = ?'
+        );
+        $query->bindValue(1, $args['activityId']);
+        $query->execute();
+        $attends = $query->fetchAll();
+
+        $query = $this->db->prepare(
+            'SELECT `md5`, `name` FROM pro_activity_attach WHERE aid = ?'
+        );
+        $query->bindValue(1, $args['activityId']);
+        $query->execute();
+        $attaches = $query->fetchAll();
+
+        $this->view->render($response, 'activities/show.phtml', [
+            'activity' => $activity,
+            'attends' => $attends,
+            'attaches' => $attaches,
+        ]);
+        return $response;
+    }
 }
