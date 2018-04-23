@@ -60,9 +60,9 @@ class SourcesController
             throw new \Exception('not found');
         }
 
-        $tmpb = implode('', [ $this->config->get('storage.sources') . '/', $_POST['id'], '_', $_SESSION['uid'], '_' ]);
+        $tmpb = implode('', [ $this->config->get('storage.sources') . '/', $taskId, '_', $_SESSION['uid'], '_' ]);
         for ($i = 1; file_exists($tmp = implode('', [ $tmpb, $i, '.c' ])); $i++);
-        $params = [ 'id'=> $_POST['id'], 'uid'=> $_SESSION['uid'], 'fid'=> $i ];
+        $params = [ 'id'=> $taskId, 'uid'=> $_SESSION['uid'], 'fid'=> $i ];
 
         $fp = fopen($tmp, 'wb');
         if ($fp === false)
@@ -82,7 +82,7 @@ class SourcesController
         $query = $this->db->prepare('INSERT INTO pro_submit (tid, uid, fid, compile, size) ' .
             'VALUES (:id, :uid, :fid, :compile, :size) ' .
             'ON DUPLICATE KEY UPDATE date = NOW(), compile = :compile, size = :size');
-        echo !$query->execute($params) ? $val ? $val : 3 : $val;
+        /*echo*/ !$query->execute($params) ? $val ? $val : 3 : $val;
 
         return $response
             ->withStatus(303)
@@ -91,12 +91,11 @@ class SourcesController
     }
 
     /** GET /{source_id} */
-    // TODO: source_id 부여하기
     public function show(Request $request, Response $response, array $args)
     {
         $sourceId = $args['source_id'];
 
-        $query = $this->db->prepare('SELECT * FROM pro_submit WHERE id = ?');
+        $query = $this->db->prepare('SELECT * FROM pro_submit WHERE source_id = ?');
         $query->bindValue(1, $sourceId);
         $query->execute();
         $source = $query->fetch();
@@ -127,6 +126,32 @@ class SourcesController
         $userId = $request->getQueryParam('user_id');
         $isCompiled = $request->getQueryParam('is_compiled');
         $reviewStatus = $request->getQueryParam('review_status');
+
+        $sql = 'SELECT submit.source_id, submit.uid, submit.fid, submit.compile, submit.size, submit.date, '
+            . 'member.gen, member.name, submit.tid FROM pro_submit submit '
+            . 'LEFT JOIN pro_members member ON (submit.uid = member.id) ';
+        $conds = [];
+        $params = [];
+        if (!is_null($taskId)) {
+            $conds[] = 'submit.tid = ?';
+            $params[] = $taskId;
+        }
+        if (!is_null($userId)) {
+            $conds[] = 'submit.uid = ?';
+            $params[] = $userId;
+        }
+        if (count($conds)) {
+            $sql .= ' WHERE ' . \implode(' AND ', $conds);
+        }
+        $sql .= ' ORDER BY submit.source_id DESC';
+
+        $query = $this->db->prepare($sql);
+        $query->execute($params);
+        $sources = $query->fetchAll();
+
+        $this->view->render($response, 'sources/search.phtml', [
+            'sources' => $sources,
+        ]);
         return $response;
     }
 }
