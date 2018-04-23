@@ -29,16 +29,6 @@ class SessionController
 
     public function login(Request $request, Response $response)
     {
-        if (isset($_COOKIE[session_name()]))
-        {
-            session_start();
-            if (isset($_SESSION['uid']))
-            {
-                throw new \Exception('already logged in');
-            }
-            session_write_close();
-        }
-
         $get = $request->getQueryParams();
         $this->view->render($response, 'session/login.phtml', [
             'registered' => isset($get['registered']),
@@ -49,16 +39,6 @@ class SessionController
 
     public function store(Request $request, Response $response)
     {
-        if (isset($_COOKIE[session_name()]))
-        {
-            session_start();
-            if (isset($_SESSION['uid']))
-            {
-                throw new \Exception('already logged in');
-            }
-            session_write_close();
-        }
-
         $uri = $request->getUri();
         $post = $request->getParsedBody();
         // TODO: 에러 처리
@@ -106,16 +86,6 @@ class SessionController
 
     public function register(Request $request, Response $response)
     {
-        if (isset($_COOKIE[session_name()]))
-        {
-            session_start();
-            if (isset($_SESSION['uid']))
-            {
-                throw new \Exception('already logged in');
-            }
-            session_write_close();
-        }
-
         if ($_POST['pw'] !== $_POST['pwc']) {
             throw new \Exception('pw does not equal to pwc');
         }
