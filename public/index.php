@@ -53,27 +53,27 @@ $app->group('/activities', function () {
     $this->get('/new', App\Controllers\ActivitiesController::class . ':new')->setName('activity.new');
     $this->post('/new', App\Controllers\ActivitiesController::class . ':store')->setName('activity.store');
     $this->get('/archive[/{year}[/{month}[/{date}]]]', App\Controllers\ActivitiesController::class . ':list')->setName('activity.list');
-    $this->get('/{activityId}', App\Controllers\ActivitiesController::class . ':show')->setName('activity.show');
-    $this->get('/{activityId}/edit', App\Controllers\ActivitiesController::class . ':edit');
-    $this->post('/{activityId}/put', App\Controllers\ActivitiesController::class . ':update');
-    $this->post('/{activityId}/delete', App\Controllers\ActivitiesController::class . ':destroy');
+    $this->get('/{activity_id}', App\Controllers\ActivitiesController::class . ':show')->setName('activity.show');
+    $this->get('/{activity_id}/edit', App\Controllers\ActivitiesController::class . ':edit');
+    $this->post('/{activity_id}/put', App\Controllers\ActivitiesController::class . ':update');
+    $this->post('/{activity_id}/delete', App\Controllers\ActivitiesController::class . ':destroy');
 });
 $app->group('/tasks', function () {
     $this->get('', App\Controllers\TasksController::class . ':index')->setName('task.index');
     $this->get('/new', App\Controllers\TasksController::class . ':new')->setName('task.new');
     $this->post('/new', App\Controllers\TasksController::class . ':store')->setName('task.store');
-    $this->get('/{taskId}', App\Controllers\TasksController::class . ':show')->setName('task.show');
-    $this->get('/{taskId}/edit', App\Controllers\TasksController::class . ':edit');
-    $this->post('/{taskId}/put', App\Controllers\TasksController::class . ':update');
-    $this->post('/{taskId}/delete', App\Controllers\TasksController::class . ':destroy');
+    $this->get('/{task_id}', App\Controllers\TasksController::class . ':show')->setName('task.show');
+    $this->get('/{task_id}/edit', App\Controllers\TasksController::class . ':edit');
+    $this->post('/{task_id}/put', App\Controllers\TasksController::class . ':update');
+    $this->post('/{task_id}/delete', App\Controllers\TasksController::class . ':destroy');
 });
 $app->group('/sources', function () {
     $this->get('', App\Controllers\SourcesController::class . ':index')->setName('source.index');
-    $this->get('/new[/{taskId}]', App\Controllers\SourcesController::class . ':new');
-    $this->post('/new[/{taskId}]', App\Controllers\SourcesController::class . ':store');
-    $this->get('/{sourceId}', App\Controllers\SourcesController::class . ':show');
-    $this->post('/{sourceId}/vote', App\Controllers\SourcesController::class . ':voteup');
-    $this->post('/{sourceId}/vote/delete', App\Controllers\SourcesController::class . ':votedown');
+    $this->get('/new[/{task_id}]', App\Controllers\SourcesController::class . ':new');
+    $this->post('/new[/{task_id}]', App\Controllers\SourcesController::class . ':store');
+    $this->get('/{source_id}', App\Controllers\SourcesController::class . ':show');
+    $this->post('/{source_id}/vote', App\Controllers\SourcesController::class . ':voteup');
+    $this->post('/{source_id}/vote/delete', App\Controllers\SourcesController::class . ':votedown');
     $this->get('/search', App\Controllers\SourcesController::class . ':search');
 });
 
