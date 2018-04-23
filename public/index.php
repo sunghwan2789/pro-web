@@ -58,6 +58,11 @@ $app->group('/activities', function () {
     $this->post('/{activityId}/edit', App\Controllers\ActivitiesController::class . ':update');
     $this->post('/{activityId}/delete', App\Controllers\ActivitiesController::class . ':delete');
 });
+$app->group('/tasks', function () {
+    $this->get('', App\Controllers\TasksController::class . ':index')->setName('task.index');
+    $this->get('/{taskId}/submissions', App\Controllers\TasksController::class . ':');
+    $this->post('/{taskId}/submit', App\Controllers\TasksController::class . ':submit');
+});
 
 
 $app->run();
