@@ -39,10 +39,10 @@ class SessionController
             session_write_close();
         }
 
-        $params = $request->getQueryParams();
+        $get = $request->getQueryParams();
         $this->view->render($response, 'session/login.phtml', [
-            'registered' => isset($params['registered']),
-            'return' => strval($params['return']),
+            'registered' => isset($get['registered']),
+            'return' => strval($get['return']),
         ]);
         return $response;
     }
@@ -60,14 +60,14 @@ class SessionController
         }
 
         $uri = $request->getUri();
-        $body = $request->getParsedBody();
+        $post = $request->getParsedBody();
         // TODO: 에러 처리
-        if (is_null($body)) {
+        if (is_null($post)) {
             return $response;
         }
 
         $query = $this->db->prepare('SELECT pw FROM pro_members WHERE id = ?');
-        $query->bindValue(1, $body['id']);
+        $query->bindValue(1, $post['id']);
         $query->execute();
         $pw = $query->fetchColumn();
 
@@ -76,32 +76,32 @@ class SessionController
         }
         if (is_null($pw)) {
             $this->view->render($response, 'session/register.phtml', [
-                'return' => strval($body['return']),
-                'id' => strval($body['id']),
+                'return' => strval($post['return']),
+                'id' => strval($post['id']),
             ]);
             return $response;
         }
-        if (!hash_equals($pw, crypt(static::encrypt(strval($body['pw'])), $pw))) {
+        if (!hash_equals($pw, crypt(static::encrypt(strval($post['pw'])), $pw))) {
             throw new \Exception('pw is wrong');
         }
 
         session_set_cookie_params(
-            60 * 60 * 24 * 7 * 4 * ($body['keep'] === 'on'),
+            60 * 60 * 24 * 7 * 4 * ($post['keep'] === 'on'),
             '/',
             $uri->getHost(),
             false,
             true);
         session_start();
-        $_SESSION['uid'] = $body['id'];
+        $_SESSION['uid'] = $post['id'];
 
         $query = $this->db->prepare('INSERT INTO pro_member_log SET uid = ?, `text` = ?');
-        $query->bindValue(1, $body['id']);
+        $query->bindValue(1, $post['id']);
         $query->bindValue(2, 'LOGIN');
         $query->execute();
 
         return $response
             ->withStatus(303)
-            ->withHeader('Location', strval($body['return']));
+            ->withHeader('Location', strval($post['return']));
     }
 
     public function register(Request $request, Response $response)
