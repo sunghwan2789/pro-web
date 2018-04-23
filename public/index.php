@@ -50,13 +50,13 @@ $app->post('/login', App\Controllers\SessionController::class . ':store')->setNa
 $app->post('/register', App\Controllers\SessionController::class . ':register')->setName('session.register');
 $app->get('/logout', App\Controllers\SessionController::class . ':destroy')->setName('logout');
 $app->group('/activities', function () {
-    $this->get('/new', App\Controllers\ActivityController::class . ':new')->setName('activity.new');
-    $this->post('/new', App\Controllers\ActivityController::class . ':store')->setName('activity.store');
-    $this->get('/archive[/{year:\d+}[/{month:\d+}[/{date:\d+}]]]', App\Controllers\ActivityController::class . ':list')->setName('activity.list');
-    $this->get('/{activityId}', App\Controllers\ActivityController::class . ':show');
-    $this->get('/{activityId}/edit', App\Controllers\ActivityController::class . ':edit');
-    $this->post('/{activityId}/edit', App\Controllers\ActivityController::class . ':update');
-    $this->post('/{activityId}/delete', App\Controllers\ActivityController::class . ':delete');
+    $this->get('/new', App\Controllers\ActivitiesController::class . ':new')->setName('activity.new');
+    $this->post('/new', App\Controllers\ActivitiesController::class . ':store')->setName('activity.store');
+    $this->get('/archive[/{year}[/{month}[/{date}]]]', App\Controllers\ActivitiesController::class . ':list')->setName('activity.list');
+    $this->get('/{activityId}', App\Controllers\ActivitiesController::class . ':show');
+    $this->get('/{activityId}/edit', App\Controllers\ActivitiesController::class . ':edit');
+    $this->post('/{activityId}/edit', App\Controllers\ActivitiesController::class . ':update');
+    $this->post('/{activityId}/delete', App\Controllers\ActivitiesController::class . ':delete');
 });
 
 
