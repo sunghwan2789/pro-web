@@ -69,12 +69,12 @@ $app->group('/tasks', function () {
 });
 $app->group('/sources', function () {
     $this->get('', App\Controllers\SourcesController::class . ':index')->setName('source.index');
-    $this->get('/new[/{task_id}]', App\Controllers\SourcesController::class . ':new');
-    $this->post('/new[/{task_id}]', App\Controllers\SourcesController::class . ':store');
+    $this->get('/new/{task_id}', App\Controllers\SourcesController::class . ':new')->setName('source.new');
+    $this->post('/new/{task_id}', App\Controllers\SourcesController::class . ':store');
     $this->get('/{source_id}', App\Controllers\SourcesController::class . ':show');
     $this->post('/{source_id}/vote', App\Controllers\SourcesController::class . ':voteup');
     $this->post('/{source_id}/vote/delete', App\Controllers\SourcesController::class . ':votedown');
-    $this->get('/search', App\Controllers\SourcesController::class . ':search');
+    $this->get('/search', App\Controllers\SourcesController::class . ':search')->setName('source.search');
 });
 
 
