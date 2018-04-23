@@ -10,6 +10,9 @@ class ActivitiesController
     /** @var \Psr\Container\ContainerInterface */
     protected $container;
 
+    /** @var \Northwoods\Config\ConfigInterface */
+    protected $config;
+
     /** @var \PDO */
     protected $db;
 
@@ -22,6 +25,7 @@ class ActivitiesController
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+        $this->config = $container['config'];
         $this->db = $container['db'];
         $this->view = $container['view'];
         $this->router = $container['router'];
@@ -58,5 +62,72 @@ class ActivitiesController
             'members' => $members,
         ]);
         return $response;
+    }
+
+    /** POST /new */
+    public function store(Request $request, Response $response)
+    {
+        $query = $this->db->prepare('SELECT authority FROM pro_members WHERE id = ?');
+        $query->bindValue(1, $_SESSION['uid']);
+        $query->execute();
+        if ($query->fetchColumn() > 0)
+        {
+            echo '권한 없음';
+            return $response;
+        }
+
+        $query = $this->db->prepare(
+            'INSERT INTO pro_activities (start, end, purpose, content, place, uid) ' .
+            'VALUES (?, ?, ?, ?, ?, ?)'
+        );
+        $query->bindValue(1, $_POST['start']);
+        $query->bindValue(2, $_POST['end']);
+        $query->bindValue(3, $_POST['purpose']);
+        $query->bindValue(4, $_POST['content']);
+        $query->bindValue(5, $_POST['place']);
+        $query->bindValue(6, $_SESSION['uid']);
+        $query->execute();
+
+        $activityId = $this->db->lastInsertId();
+
+        $query = str_repeat('(' . $activityId . ', ?),', count($_POST['attend']));
+        $query = $this->db->prepare(
+            'INSERT INTO pro_activity_attend (aid, uid) ' .
+            'VALUES ' . substr($query, 0, strlen($query) - 1)
+        );
+        $query->execute($_POST['attend']);
+
+        for ($i = 0; $i < count($_FILES['attach']['name']); $i++)
+        {
+            $path = $_FILES['attach']['tmp_name'][$i];
+            $filename = $_FILES['attach']['name'][$i];
+            if (!file_exists($path))
+            {
+                continue;
+            }
+
+            $fileId = md5_file($path);
+            if (!@move_uploaded_file($path, $this->config->get('storage.attaches') . '/' . $fileId))
+            {
+                continue;
+            }
+
+            $query = $this->db->prepare(
+                'INSERT INTO pro_activity_attach (aid, md5, name) ' .
+                'VALUES (:aid, :md5, :name)'
+            );
+            $params = [];
+            $params['aid'] = $activityId;
+            $params['md5'] = $fileId;
+            $params['name'] = $filename;
+            $query->execute($params);
+
+            @unlink($path);
+        }
+        return $response
+            ->withStatus(303)
+            ->withHeader('Location', $this->router->pathFor('activity.show', [
+                'activityId' => $activityId,
+            ]));
     }
 }

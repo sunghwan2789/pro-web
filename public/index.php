@@ -53,7 +53,7 @@ $app->group('/activities', function () {
     $this->get('/new', App\Controllers\ActivitiesController::class . ':new')->setName('activity.new');
     $this->post('/new', App\Controllers\ActivitiesController::class . ':store')->setName('activity.store');
     $this->get('/archive[/{year}[/{month}[/{date}]]]', App\Controllers\ActivitiesController::class . ':list')->setName('activity.list');
-    $this->get('/{activityId}', App\Controllers\ActivitiesController::class . ':show');
+    $this->get('/{activityId}', App\Controllers\ActivitiesController::class . ':show')->setName('activity.show');
     $this->get('/{activityId}/edit', App\Controllers\ActivitiesController::class . ':edit');
     $this->post('/{activityId}/edit', App\Controllers\ActivitiesController::class . ':update');
     $this->post('/{activityId}/delete', App\Controllers\ActivitiesController::class . ':delete');

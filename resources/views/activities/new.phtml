@@ -65,7 +65,7 @@
         }
     </style>
 <body>
-    <form action="submit.php" method="POST">
+    <form action="<?=$router->pathFor('activity.store')?>" method="POST" enctype="multipart/form-data">
         <header><span>프로 활동일지 작성</span><button type="submit">&#10004;</button></header>
         <label>모임장소: <input name="place" type="text" placeholder="M502"></label>
         <label>시작: <input name="start" type="text" placeholder="2015-04-13 15:00" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}" required></label>
@@ -118,21 +118,11 @@
             $('[name=end]').val($(this).val());
         });
         $('form').on('submit', function(e) {
-            e.preventDefault();
             if (!confirm('활동 정보를 제대로 기입했나요?'))
             {
+                e.preventDefault();
                 return;
             }
-            $.ajax({
-                type: 'POST',
-                url: this.action,
-                data: new FormData(this),
-                processData: false,
-                contentType: false,
-            }).done(function()
-            {
-                window.location.replace('./');
-            })
         });
     </script>
 </html>
