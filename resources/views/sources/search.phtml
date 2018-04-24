@@ -1,27 +1,11 @@
-<?php
-
-// require_once '../_inc/cla_pdb.php';
-
-$query = PDB::$conn->prepare('SELECT idx, title, date FROM pro_tasks WHERE idx = ?');
-$query->execute([ $_GET['tid'] ]);
-$task = $query->fetch(PDB::FETCH_ASSOC);
-
-$query = PDB::$conn->prepare('SELECT submit.uid, submit.fid, submit.compile, submit.size, submit.date, ' .
-    'member.gen, member.name FROM pro_submit submit ' .
-    'LEFT JOIN pro_members member ON (submit.uid = member.id) ' .
-    'WHERE submit.tid = ? ORDER BY submit.date DESC');
-$query->execute([ $_GET['tid'] ]);
-$submits = $query->fetchAll(PDB::FETCH_ASSOC);
-
-?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>프로 과제 채점</title>
-    <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css">
-    <link rel="stylesheet" href="bower_components/codemirror/theme/mdn-like.css">
+    <link rel="stylesheet" href="/node_modules/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="/node_modules/codemirror/theme/mdn-like.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
     <style>
         body {
@@ -64,33 +48,28 @@ $submits = $query->fetchAll(PDB::FETCH_ASSOC);
         }
     </style>
 <body>
-    <header><span><?=htmlspecialchars($task['title'])?></span><button>&#8606;</button></header>
+    <header><span><?=htmlspecialchars("$ task['title']")?></span><button>&#8606;</button></header>
     <table>
         <thead><tr><th>기수<th>이름<th>컴파일<th>코드 길이<th>제출한 시간
         <tbody>
-<?php
-        foreach ($submits as $submit)
-        {?>
+<?php foreach ($sources as $source): ?>
             <tr>
-                <td><?=$submit['gen']?>기
-                <td><?=$submit['name']?>
+                <td><?=$source['gen']?>기
+                <td><?=$source['name']?>
 
-                <td><?=[ 'x', 'o' ][$submit['compile']]?>
+                <td><?=[ 'x', 'o' ][$source['compile']]?>
 
-                <td><a href="source.php?<?=implode('&amp;', [
-                        'tid=' . $task['idx'],
-                        'uid=' . $submit['uid'],
-                        'fid=' . $submit['fid'],
-                    ])?>"><?=$submit['size']?>B</a>
-                <td><?=$submit['date']?>
+                <td><a href="<?=$router->pathFor('source.show', [
+                        'source_id' => $source['source_id'],
+                    ])?>"><?=$source['size']?>B</a>
+                <td><?=$source['date']?>
 
-<?php
-        }?>
+<?php endforeach; ?>
     </table>
     <div id="dest"></div>
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <script src="bower_components/codemirror/lib/codemirror.js"></script>
-    <script src="bower_components/codemirror/mode/clike/clike.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/codemirror/lib/codemirror.js"></script>
+    <script src="/node_modules/codemirror/mode/clike/clike.js"></script>
     <script>
         var xhr;
         $('a').on('click', function(e) {

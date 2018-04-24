@@ -1,32 +1,3 @@
-<?php
-
-// require_once '../_inc/cla_pdb.php';
-
-$query = PDB::$conn->prepare('SELECT authority FROM pro_members WHERE id = ?');
-$query->bindValue(1, $_SESSION['uid']);
-$query->execute();
-if ($query->fetchColumn() > 0)
-{
-    echo '권한 없음';
-    exit;
-}
-
-// 최근 1년간 참여 횟수로 정렬됨
-$query = PDB::$conn->prepare(
-    'SELECT a.id, a.gen, a.name FROM pro_members a ' .
-    'LEFT JOIN (' .
-        'SELECT c.uid, COUNT(*) AS attends ' .
-        'FROM pro_activities b ' .
-        'LEFT JOIN pro_activity_attend c ON (b.idx = c.aid) ' .
-        'WHERE b.end > DATE_SUB(CURDATE(), INTERVAL 2 MONTH) ' .
-        'GROUP BY c.uid' .
-    ') d ON (a.id = d.uid) '.
-    'ORDER BY a.authority ASC, d.attends DESC, a.gen DESC, a.id ASC'
-);
-$query->execute();
-$members = $query->fetchAll(PDB::FETCH_ASSOC);
-
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -94,7 +65,7 @@ $members = $query->fetchAll(PDB::FETCH_ASSOC);
         }
     </style>
 <body>
-    <form action="submit.php" method="POST">
+    <form action="<?=$router->pathFor('activity.store')?>" method="POST" enctype="multipart/form-data">
         <header><span>프로 활동일지 작성</span><button type="submit">&#10004;</button></header>
         <label>모임장소: <input name="place" type="text" placeholder="M502"></label>
         <label>시작: <input name="start" type="text" placeholder="2015-04-13 15:00" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}" required></label>
@@ -111,7 +82,7 @@ $members = $query->fetchAll(PDB::FETCH_ASSOC);
         <label>내용: <textarea name="content"></textarea></label><button class="span">늘이기</button>
         <label>파일 첨부: <input name="attach[]" type="file" multiple></label>
     </form>
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
     <script>
         $('select').on('change', function(e) {
             e.preventDefault();
@@ -147,21 +118,11 @@ $members = $query->fetchAll(PDB::FETCH_ASSOC);
             $('[name=end]').val($(this).val());
         });
         $('form').on('submit', function(e) {
-            e.preventDefault();
             if (!confirm('활동 정보를 제대로 기입했나요?'))
             {
+                e.preventDefault();
                 return;
             }
-            $.ajax({
-                type: 'POST',
-                url: this.action,
-                data: new FormData(this),
-                processData: false,
-                contentType: false,
-            }).done(function()
-            {
-                window.location.replace('./');
-            })
         });
     </script>
 </html>

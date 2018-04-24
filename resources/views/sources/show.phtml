@@ -3,14 +3,14 @@ header('Content-Type: text/plain; charset=UTF-8');
 
 //$SOURCES = __DIR__ . '/_data/sources/';
 
-$source = $config->get('storage.sources') . '/' . implode('_', [ $_GET['tid'], $_GET['uid'], $_GET['fid'] ]) . '.c';
+$file = $config->get('storage.sources') . '/' . implode('_', [ $source['tid'], $source['uid'], $source['fid'] ]) . '.c';
 
-if (stripos(realpath($source), realpath($config->get('storage.sources'))) !== 0)
+if (stripos(realpath($file), realpath($config->get('storage.sources'))) !== 0)
 {
     exit;
 }
 
-$fp = fopen($source, 'rb');
+$fp = fopen($file, 'rb');
 if ($fp === false)
 {
     exit;
@@ -23,4 +23,3 @@ while (!feof($fp))
     flush();
 }
 fclose($fp);
-?>

@@ -1,106 +1,79 @@
 <?php
 
-// require_once '../_inc/cla_pdb.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
-$query = PDB::$conn->prepare(
-    'SELECT a.idx, a.start, a.end, a.purpose, a.content, a.place, c.gen, c.name ' .
-    'FROM pro_activities a ' .
-    'LEFT JOIN pro_activity_attend b ON (a.idx = b.aid) ' .
-    'LEFT JOIN pro_members c ON (b.uid = c.id) ' .
-    'ORDER BY a.idx DESC'
-);
-$query->execute();
-$activitiesAttends = $query->fetchAll(PDB::FETCH_ASSOC);
-
-?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>프로 활동일지</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-    <style>
-        body {
-            margin: 3em .5em 0 .5em;
-            line-height: 1.6;
-            font-size: 16px;
-            font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-        }
-        body > header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #efefef;
-            border-bottom: 1px solid #ccc;
-            line-height: 2.5em;
-            width: 100%;
-            padding: 0 .5em;
-            box-sizing: border-box;
-            white-space: nowrap;
-            font-weight: bold;
-        }
-        header a {
-            float: right;
-            text-decoration: none;
-        }
-    </style>
-<body>
-    <header>프로 활동일지 <a href="task.php">과제</a></header>
-<?php
+(new josegonzalez\Dotenv\Loader(dirname(__DIR__) . '/.env'))->parse()->putenv();
+$config = Northwoods\Config\ConfigFactory::make([
+    'directory' => dirname(__DIR__) . '/config' . '/',
+]);
 
 
-$p = 0;
-foreach ($activitiesAttends as $i)
-{
-    if ($p != $i['idx'])
-    {
-        if ($p)
-        {
-?>
-
-    </ul>
-    <hr>
-<?php
-        }
-        $p = $i['idx'];
-        $start = strtotime($i['start']);
-        $end = strtotime($i['end']);
-?>
-    <h2><?=htmlspecialchars($i['purpose'])?></h2>
-    @<?=$i['place']?> #<time><?=date('Y-m-d H:i', $start)?></time> ~ <?=date((date('d', $start) != date('d', $end) ? 'Y-m-d ' : '') . 'H:i', $end)?>
-
-    <p><?=nl2br(htmlspecialchars($i['content']))?>
+$app = new Slim\App($config->get('slim'));
 
 
-    <h3>첨부 파일</h3>
-    <ul>
-<?php
-        $query = PDB::$conn->prepare('SELECT md5, name FROM pro_activity_attach WHERE aid = ?');
-        $query->execute([ $i['idx'] ]);
-        foreach ($query->fetchAll(PDB::FETCH_ASSOC) as $j)
-        {
-            echo '<li><a href="download.php?id=', $j['md5'], '&amp;name=', urlencode($j['name']), '">',
-                 htmlspecialchars($j['name']), '</a>';
-        }
-?>
+$container = $app->getContainer();
 
-    </ul>
+$container['config'] = function ($c) use ($config) {
+    return $config;
+};
 
-    <h3>참여 회원</h3>
-    <ul>
-<?php
-    }
-    echo '<li>', $i['gen'], '기 ', htmlspecialchars($i['name']);
-}
-if ($p)
-{
-?>
+$container['db'] = function ($c) {
+    $pdo = new PDO(getenv('DB_DSN'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'));
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    return $pdo;
+};
 
-    </ul>
-<?php
-}
+$container['view'] = function ($c) {
+    return new Slim\Views\PhpRenderer(
+        dirname(__DIR__) . '/resources/views/',
+        [
+            'router' => $c->router,
+            'request' => $c->request,
+            'response' => $c->response,
+            'config' => $c->config,
+        ]
+    );
+};
 
 
-?>
-</html>
+$app->get('/', App\Controllers\HomeController::class . ':index');
+$app->get('/login', App\Controllers\SessionController::class . ':login')->setName('login');
+$app->post('/login', App\Controllers\SessionController::class . ':store')->setName('session.store');
+$app->post('/register', App\Controllers\SessionController::class . ':register')->setName('session.register');
+$app->get('/logout', App\Controllers\SessionController::class . ':destroy')->setName('logout');
+$app->group('/activities', function () {
+    $this->get('/new', App\Controllers\ActivitiesController::class . ':new')->setName('activity.new');
+    $this->post('/new', App\Controllers\ActivitiesController::class . ':store')->setName('activity.store');
+    $this->get('/archive[/{year}[/{month}[/{date}]]]', App\Controllers\ActivitiesController::class . ':list')->setName('activity.list');
+    $this->get('/{activity_id}', App\Controllers\ActivitiesController::class . ':show')->setName('activity.show');
+    $this->get('/{activity_id}/edit', App\Controllers\ActivitiesController::class . ':edit');
+    $this->post('/{activity_id}/put', App\Controllers\ActivitiesController::class . ':update');
+    $this->post('/{activity_id}/delete', App\Controllers\ActivitiesController::class . ':destroy');
+});
+$app->get('/files/{file_id}', App\Controllers\FilesController::class . ':download')->setName('file.download');
+$app->group('/tasks', function () {
+    $this->get('', App\Controllers\TasksController::class . ':index')->setName('task.index');
+    $this->get('/new', App\Controllers\TasksController::class . ':new')->setName('task.new');
+    $this->post('/new', App\Controllers\TasksController::class . ':store')->setName('task.store');
+    $this->get('/{task_id}', App\Controllers\TasksController::class . ':show')->setName('task.show');
+    $this->get('/{task_id}/edit', App\Controllers\TasksController::class . ':edit');
+    $this->post('/{task_id}/put', App\Controllers\TasksController::class . ':update');
+    $this->post('/{task_id}/delete', App\Controllers\TasksController::class . ':destroy');
+});
+$app->group('/sources', function () {
+    $this->get('', App\Controllers\SourcesController::class . ':index')->setName('source.index');
+    $this->get('/new/{task_id}', App\Controllers\SourcesController::class . ':new')->setName('source.new');
+    $this->post('/new/{task_id}', App\Controllers\SourcesController::class . ':store')->setName('source.store');
+    $this->get('/search', App\Controllers\SourcesController::class . ':search')->setName('source.search');
+    $this->get('/{source_id}', App\Controllers\SourcesController::class . ':show')->setName('source.show');
+    $this->get('/{source_id}/raw', App\Controllers\SourcesController::class .':raw')->setName('source.raw');
+    $this->post('/{source_id}/vote', App\Controllers\SourcesController::class . ':voteup');
+    $this->post('/{source_id}/vote/delete', App\Controllers\SourcesController::class . ':votedown');
+});
+
+
+$app->add(App\Middleware\Authenticate::class);
+
+
+$app->run();

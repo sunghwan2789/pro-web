@@ -95,17 +95,16 @@
         }
     </style>
 <body>
-    <img src="_data/logo-pro-2.png" alt="프로 로고">
+    <img src="/_data/logo-pro-2.png" alt="프로 로고">
     <aside>
         <button>&#10005;</button>
         <p>누리집을 이용하려면 계정에 비밀번호를 설정해야 합니다. 본인 확인을 위해 필요한 정보를 모두 입력하고 계정 설정을 완료하세요.
         <p>* 본인 확인이 안 되면 관리자에게 문의 바랍니다.
     </aside>
-    <form action="authenticate.php" method="POST">
-        <input name="action" type="hidden" value="initialize">
-        <input name="return" type="hidden" value="<?=htmlentities(strval($_POST['return']))?>">
+    <form action="<?=$router->pathFor('session.register')?>" method="POST">
+        <input name="return" type="hidden" value="<?=htmlentities($return)?>">
         <h3>비밀번호 설정</h3>
-        <input name="id" type="text" placeholder="아이디" value="<?=htmlentities(strval($_POST['id']))?>" required readonly>
+        <input name="id" type="text" placeholder="아이디" value="<?=htmlentities($id)?>" required readonly>
         <input name="pw" type="password" placeholder="비밀번호" required>
         <input name="pwc" type="password" placeholder="비밀번호 확인" required>
         <h3>본인 확인</h3>

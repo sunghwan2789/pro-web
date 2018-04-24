@@ -1,17 +1,57 @@
 <?php
-class FileIO
+namespace App\Controllers;
+
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
+use Slim\Http\Stream;
+
+class FilesController
 {
-    public static function scandir($target) {
-        foreach(scandir($target) as $subtarget) {
-            if($subtarget == '.' || $subtarget == '..') continue;
-            if(is_file($target.'/'.$subtarget)) {
-                $list[] = $target.'/'.$subtarget;
-                continue;
-            }
-            foreach(static::scandir($target.'/'.$subtarget) as $subtarget) $list[] = $subtarget;
-        }
-        return $list;
+    /** @var \Psr\Container\ContainerInterface */
+    protected $container;
+
+    /** @var \Northwoods\Config\ConfigInterface */
+    protected $config;
+
+    /** @var \PDO */
+    protected $db;
+
+    /** @var \Slim\Views\PhpRenderer */
+    protected $view;
+
+    /** @var \Slim\Router */
+    protected $router;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+        $this->config = $container['config'];
+        $this->db = $container['db'];
     }
+
+    /** GET /files/{file_id} */
+    public function download(Request $request, Response $response, array $args)
+    {
+        $fileId = $args['file_id'];
+
+        $query = $this->db->prepare('SELECT md5, name FROM pro_activity_attach WHERE md5 = ?');
+        $query->bindValue(1, $fileId);
+        $query->execute();
+        $file = $query->fetch();
+        if ($file === false) {
+            throw new \Exception('not found');
+        }
+
+        $basePath = $this->config->get('storage.attaches');
+        $path = $basePath . "/{$file['md5']}";
+        if (stripos(realpath($path), realpath($basePath)) !== 0) {
+            throw new \Exception('LFI guard');
+        }
+
+        static::get($path, $file['name']);
+    }
+
     public static function filesize($target) {
         $size = ((file_exists($target)) ? sprintf('%.0f', filesize($target)) : sprintf('%.0f', $target))*1024;
         $units = array('b', 'B', 'KB', 'MB', 'GB', 'TB');
@@ -21,13 +61,8 @@ class FileIO
     public static function stripFileName($name) {
         return preg_replace('/[\\\\\/:*?"<>|]/', '-', $name);
     }
-
-    public static function put() {
-        set_time_limit(0);
-
-    }
     public static function mime($path) {
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
         return $finfo->file($path);
     }
     public static function get($path, $name = '', $mimeType = '', $expires = 0, $streaming = false)
@@ -122,30 +157,5 @@ class FileIO
         }
 
         fclose($fp);
-    }
-    public static function surf($url, $method = 'GET', $param = '', $cookie = '') {
-        $method = strtoupper($method);
-        $imfile = strpos($method, 'FILE') !== false;
-        if($imfile) $fp = fopen($param, 'wb+');
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_USERAGENT, '');
-        curl_setopt($ch, CURLOPT_COOKIE, $cookie);
-        if(strpos($method, 'POST') !== false) {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $param);
-        }
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        if($imfile) curl_setopt($ch, CURLOPT_FILE, $fp);
-        else if(strpos($method, 'NOHEAD') === false) curl_setopt($ch, CURLOPT_HEADER, true);
-
-        $data = curl_exec($ch);
-        curl_close($ch);
-        if($imfile) fclose($fp);
-
-        if(!$data) die('* Internet Connect Failed!');
-        return $data;
     }
 }

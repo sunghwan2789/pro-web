@@ -84,21 +84,16 @@
         }
     </style>
 <body>
-    <img src="_data/logo-pro-2.png" alt="프로 로고">
-<?php
-if (preg_match('/\/authenticate\.php$/', $_SERVER['HTTP_REFERER']))
-{
-?>
+    <img src="/_data/logo-pro-2.png" alt="프로 로고">
+<?php if ($registered): ?>
     <aside>
         <button>&#10005;</button>
         <p>계정 설정을 완료했습니다.
         <p>다시 로그인하세요.
     </aside>
-<?php
-}
-?>
-    <form action="authenticate.php" method="POST">
-        <input name="return" type="hidden" value="<?=htmlentities($_SERVER['REQUEST_URI'])?>">
+<?php endif; ?>
+    <form action="<?=$router->pathFor('session.store')?>" method="POST">
+        <input name="return" type="hidden" value="<?=htmlentities($return)?>">
         <input name="id" type="text" placeholder="아이디">
         <input name="pw" type="password" placeholder="비밀번호">
         <label><input name="keep" type="checkbox"> 로그인 상태 유지</label>
