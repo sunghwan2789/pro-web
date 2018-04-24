@@ -31,6 +31,7 @@ $container['view'] = function ($c) {
             'router' => $c->router,
             'request' => $c->request,
             'response' => $c->response,
+            'config' => $c->config,
         ]
     );
 };
@@ -62,7 +63,7 @@ $app->group('/tasks', function () {
 $app->group('/sources', function () {
     $this->get('', App\Controllers\SourcesController::class . ':index')->setName('source.index');
     $this->get('/new/{task_id}', App\Controllers\SourcesController::class . ':new')->setName('source.new');
-    $this->post('/new/{task_id}', App\Controllers\SourcesController::class . ':store');
+    $this->post('/new/{task_id}', App\Controllers\SourcesController::class . ':store')->setName('source.store');
     $this->get('/search', App\Controllers\SourcesController::class . ':search')->setName('source.search');
     $this->get('/{source_id}', App\Controllers\SourcesController::class . ':show')->setName('source.show');
     $this->post('/{source_id}/vote', App\Controllers\SourcesController::class . ':voteup');

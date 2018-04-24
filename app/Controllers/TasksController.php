@@ -36,7 +36,7 @@ class TasksController
     {
         $taskId = $args['task_id'];
 
-        $query = $this->db->prepare('SELECT * FROM pro_tasks WHERE id = ?');
+        $query = $this->db->prepare('SELECT * FROM pro_tasks WHERE idx = ?');
         $query->bindValue(1, $taskId);
         $query->execute();
         $task = $query->fetch();

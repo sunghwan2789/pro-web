@@ -36,7 +36,7 @@ class SourcesController
     {
         $taskId = $args['task_id'];
 
-        $query = $this->db->prepare('SELECT * FROM pro_tasks WHERE id = ?');
+        $query = $this->db->prepare('SELECT * FROM pro_tasks WHERE idx = ?');
         $query->bindValue(1, $taskId);
         $query->execute();
         $task = $query->fetch();
@@ -44,6 +44,11 @@ class SourcesController
         if ($task === false) {
             throw new \Exception('not found');
         }
+
+        $this->view->render($response, 'sources/new.phtml', [
+            'task' => $task,
+        ]);
+        return $response;
     }
 
     /** POST /new/{task_id} */
@@ -51,7 +56,7 @@ class SourcesController
     {
         $taskId = $args['task_id'];
 
-        $query = $this->db->prepare('SELECT * FROM pro_tasks WHERE id = ?');
+        $query = $this->db->prepare('SELECT * FROM pro_tasks WHERE idx = ?');
         $query->bindValue(1, $taskId);
         $query->execute();
         $task = $query->fetch();
