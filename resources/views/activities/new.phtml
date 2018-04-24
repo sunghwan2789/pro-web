@@ -32,12 +32,18 @@
     <script src="/node_modules/popper.js/dist/umd/popper.min.js"></script>
     <script src="/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/node_modules/codemirror/lib/codemirror.js"></script>
-    <script src="/node_modules/tui-editor/dist/tui-editor-Editor-all.min.js"></script>
+    <script src="/node_modules/to-mark/dist/to-mark.min.js"></script>
+    <script src="/node_modules/markdown-it/dist/markdown-it.min.js"></script>
+    <script src="/node_modules/tui-code-snippet/dist/tui-code-snippet.min.js"></script>
+    <script src="/node_modules/highlight.js/lib/highlight.js"></script>
+    <script src="/node_modules/squire-rte/build/squire.js"></script>
+    <script src="/node_modules/tui-editor/dist/tui-editor-Editor.js"></script>
     <script>
 $('#sec').tuiEditor({
     initialEditType: 'markdown',
     previewStyle: 'vertical',
-    height: '300px'
+    height: '300px',
+    codeBlockLanguages: ['c', 'cpp', 'javascript'],
 });
         $('select').on('change', function(e) {
             e.preventDefault();
