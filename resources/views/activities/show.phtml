@@ -45,7 +45,9 @@
     <h3>첨부 파일</h3>
     <ul>
 <?php foreach ($attaches as $i): ?>
-        <li><a href="download.php?id=<?=$i['md5']?>&amp;name=<?=urlencode($i['name'])?>">
+        <li><a href="<?=$router->pathFor('file.download', [
+            'file_id' => $i['md5'],
+        ])?>">
             <?=htmlspecialchars($i['name'])?>
         </a>
 <?php endforeach; ?>

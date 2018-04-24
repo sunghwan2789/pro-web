@@ -121,7 +121,7 @@ class SourcesController
     {
         $basePath = $this->config->get('storage.sources');
         $path = $basePath . "/{$source['tid']}_{$source['uid']}_{$source['fid']}.c";
-        if (stripos(realpath($path), realpath($basePath) !== 0)) {
+        if (stripos(realpath($path), realpath($basePath)) !== 0) {
             throw new \Exception('LFI guard');
         }
         return new Stream(fopen($path, 'r'));

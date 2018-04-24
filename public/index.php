@@ -51,6 +51,7 @@ $app->group('/activities', function () {
     $this->post('/{activity_id}/put', App\Controllers\ActivitiesController::class . ':update');
     $this->post('/{activity_id}/delete', App\Controllers\ActivitiesController::class . ':destroy');
 });
+$app->get('/files/{file_id}', App\Controllers\FilesController::class . ':download')->setName('file.download');
 $app->group('/tasks', function () {
     $this->get('', App\Controllers\TasksController::class . ':index')->setName('task.index');
     $this->get('/new', App\Controllers\TasksController::class . ':new')->setName('task.new');
