@@ -36,14 +36,6 @@ $container['view'] = function ($c) {
 };
 
 
-$middleware = [
-    App\Middleware\Authenticate::class,
-];
-foreach (array_reverse($middleware) as $mw) {
-    $app->add($mw);
-}
-
-
 $app->get('/', App\Controllers\HomeController::class . ':index');
 $app->get('/login', App\Controllers\SessionController::class . ':login')->setName('login');
 $app->post('/login', App\Controllers\SessionController::class . ':store')->setName('session.store');
@@ -76,6 +68,9 @@ $app->group('/sources', function () {
     $this->post('/{source_id}/vote/delete', App\Controllers\SourcesController::class . ':votedown');
     $this->get('/search', App\Controllers\SourcesController::class . ':search')->setName('source.search');
 });
+
+
+$app->add(App\Middleware\Authenticate::class);
 
 
 $app->run();
