@@ -66,6 +66,7 @@ $app->group('/sources', function () {
     $this->post('/new/{task_id}', App\Controllers\SourcesController::class . ':store')->setName('source.store');
     $this->get('/search', App\Controllers\SourcesController::class . ':search')->setName('source.search');
     $this->get('/{source_id}', App\Controllers\SourcesController::class . ':show')->setName('source.show');
+    $this->get('/{source_id}/raw', App\Controllers\SourcesController::class .':raw')->setName('source.raw');
     $this->post('/{source_id}/vote', App\Controllers\SourcesController::class . ':voteup');
     $this->post('/{source_id}/vote/delete', App\Controllers\SourcesController::class . ':votedown');
 });

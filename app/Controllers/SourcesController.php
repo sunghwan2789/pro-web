@@ -4,6 +4,7 @@ namespace App\Controllers;
 use Psr\Container\ContainerInterface;
 use Slim\Http\Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use Slim\Http\Stream;
 
 class SourcesController
 {
@@ -111,8 +112,38 @@ class SourcesController
 
         $this->view->render($response, 'sources/show.phtml', [
             'source' => $source,
+            'stream' => $this->getSourceStream($source),
         ]);
         return $response;
+    }
+
+    private function getSourceStream($source)
+    {
+        $basePath = $this->config->get('storage.sources');
+        $path = $basePath . "/{$source['tid']}_{$source['uid']}_{$source['fid']}.c";
+        if (stripos(realpath($path), realpath($basePath) !== 0)) {
+            throw new \Exception('LFI guard');
+        }
+        return new Stream(fopen($path, 'r'));
+    }
+
+    /** GET /{source_id}/raw */
+    public function raw(Request $request, Response $response, array $args)
+    {
+        $sourceId = $args['source_id'];
+
+        $query = $this->db->prepare('SELECT * FROM pro_submit WHERE source_id = ?');
+        $query->bindValue(1, $sourceId);
+        $query->execute();
+        $source = $query->fetch();
+
+        if ($source === false) {
+            throw new \Exception('not found');
+        }
+
+        return $response
+            ->withHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->withBody($this->getSourceStream($source));
     }
 
     /**
