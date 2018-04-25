@@ -42,6 +42,11 @@ EOP;
           </a>
         </li>
         <li class="nav-item">
+          <a href="<?=$router->pathFor('task.list')?>" class="nav-link">
+            아카이브
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="<?=$router->pathFor('task.new')?>" class="nav-link">
             게시
           </a>
@@ -55,26 +60,25 @@ EOP;
   </nav>
 
   <div class="container">
-    <h2>문제</h2>
-      <h3 class="mb-1"><?=htmlspecialchars($task['title'])?></h3>
-      <div class="mb-3">
-        <i class="fas fa-calendar-alt" title="게시일"></i> <time><?=$task['date']?></time>
-        <i class="fas fa-calendar-check" title="마감일"></i> <?=$task['date']?>
+    <h2 class="mb-1"><?=htmlspecialchars($task['title'])?></h2>
+    <div class="mb-3">
+      <i class="fas fa-calendar-alt" title="게시일"></i> <time><?=$task['date']?></time>
+      <i class="fas fa-calendar-check" title="마감일"></i> <?=$task['date']?>
+    </div>
+
+    <!-- // TODO: markdown converter로 바꾸기 -->
+    <div class="mb-3" style="text-align: justify"><?=$task['content']?></div>
+
+    <aside class="row">
+      <div class="col-sm">
+        <h4>예시 입력</h4>
+        <pre class="console text-light bg-dark"><?=htmlspecialchars($task['in'])?></pre>
       </div>
-
-      <!-- // TODO: markdown converter로 바꾸기 -->
-      <div class="mb-3" style="text-align: justify"><?=$task['content']?></div>
-
-      <aside class="row">
-        <div class="col-sm">
-          <h4>예시 입력</h4>
-          <pre class="console text-light bg-dark"><?=htmlspecialchars($task['in'])?></pre>
-        </div>
-        <div class="col-sm">
-          <h4>예시 출력</h4>
-          <pre class="console text-light bg-dark"><?=htmlspecialchars($task['out'])?></pre>
-        </div>
-      </aside>
+      <div class="col-sm">
+        <h4>예시 출력</h4>
+        <pre class="console text-light bg-dark"><?=htmlspecialchars($task['out'])?></pre>
+      </div>
+    </aside>
 
     <h2>코드</h2>
     <form id="submit" action="<?=$router->pathFor('source.store', [

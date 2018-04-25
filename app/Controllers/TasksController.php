@@ -50,4 +50,26 @@ class TasksController
         ]);
         return $response;
     }
+
+    /** GET /tasks */
+    public function index(Request $request, Response $response)
+    {
+        $todayStr = date('Y-m-d');
+
+        $query = $this->db->prepare(
+            'SELECT idx, title, date FROM pro_tasks'
+            . ' WHERE date BETWEEN :start AND :end OR date BETWEEN :start AND :end'
+            // order by endDate desc
+            . ' ORDER BY date DESC'
+        );
+        $query->bindParam(':start', $todayStr);
+        $query->bindParam(':end', $todayStr);
+        $query->execute();
+        $tasks = $query->fetchAll();
+
+        $this->view->render($response, 'tasks/index.phtml', [
+            'tasks' => $tasks,
+        ]);
+        return $response;
+    }
 }

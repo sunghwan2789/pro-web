@@ -56,6 +56,7 @@ $app->group('/tasks', function () {
     $this->get('', App\Controllers\TasksController::class . ':index')->setName('task.index');
     $this->get('/new', App\Controllers\TasksController::class . ':new')->setName('task.new');
     $this->post('/new', App\Controllers\TasksController::class . ':store')->setName('task.store');
+    $this->get('/archive[/{year}[/{month}]]', App\Controllers\TasksController::class . ':list')->setName('task.list');
     $this->get('/{task_id}', App\Controllers\TasksController::class . ':show')->setName('task.show');
     $this->get('/{task_id}/edit', App\Controllers\TasksController::class . ':edit');
     $this->post('/{task_id}/put', App\Controllers\TasksController::class . ':update');
