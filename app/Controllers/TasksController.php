@@ -4,6 +4,7 @@ namespace App\Controllers;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use DateTime;
 
 class TasksController
 {
@@ -68,6 +69,42 @@ class TasksController
         $tasks = $query->fetchAll();
 
         $this->view->render($response, 'tasks/index.phtml', [
+            'tasks' => $tasks,
+        ]);
+        return $response;
+    }
+
+    /** GET /archive[/{year}[/{month}]] */
+    public function list(Request $request, Response $response, array $args)
+    {
+        $startDate = (new DateTime())->setTimestamp(0);
+        $endDate = new DateTime();
+        if (!empty($args['year'])) {
+            $startDate->setDate($args['year'], 1, 1);
+            $endDate = (clone $startDate)->modify('+1 year');
+            if (!empty($args['month'])) {
+                $startDate->setDate($args['year'], $args['month'], 1);
+                $endDate = (clone $startDate)->modify('+1 month')->modify('-1 day');
+            }
+        }
+        $startDateStr = $startDate->format('Y-m-d');
+        $endDateStr = $endDate->format('Y-m-d');
+
+        $query = $this->db->prepare(
+            'SELECT idx, title, date FROM pro_tasks'
+            . ' WHERE date BETWEEN :start AND :end OR date BETWEEN :start AND :end'
+            // order by endDate desc
+            . ' ORDER BY date DESC'
+        );
+        $query->bindParam(':start', $startDateStr);
+        $query->bindParam(':end', $endDateStr);
+        $query->execute();
+        $tasks = $query->fetchAll();
+
+        $this->view->render($response, 'tasks/archive.phtml', [
+            'displayYear' => $args['year'],
+            'displayMonth' => $args['month'],
+            'shouldDisplayMonthFilter' => !empty($args['year']),
             'tasks' => $tasks,
         ]);
         return $response;

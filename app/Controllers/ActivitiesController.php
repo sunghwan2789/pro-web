@@ -185,7 +185,7 @@ class ActivitiesController
             $endDate = (clone $startDate)->modify('+1 year');
             if (!empty($args['month'])) {
                 $startDate->setDate($args['year'], $args['month'], 1);
-                $endDate = (clone $startDate)->modify('+1 month');
+                $endDate = (clone $startDate)->modify('+1 month')->modify('-1 day');
             }
         }
         $startDateStr = $startDate->format('Y-m-d');
