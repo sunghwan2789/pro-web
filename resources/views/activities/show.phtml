@@ -33,37 +33,35 @@
   $start = strtotime($activity['start']);
   $end = strtotime($activity['end']);
 ?>
-    <div class="flex-column align-items-start">
-      <h2 class="mb-1"><?=htmlspecialchars($activity['purpose'])?></h5>
-      <div class="mb-3">
-        <i class="fas fa-users" title="참여 회원 수"></i> <?=count($attends)?>명
-        <i class="fas fa-location-arrow" title="활동 장소"></i> <?=$activity['place']?>
-        <i class="fas fa-calendar-alt" title="활동 시간"></i> <time><?=date('Y-m-d H:i', $start)?></time> ~ <?=date((date('d', $start) != date('d', $end) ? 'Y-m-d ' : '') . 'H:i', $end)?>
-      </div>
-
-      <!-- // TODO: markdown converter로 바꾸기 -->
-      <p><?=nl2br(htmlspecialchars($activity['content']))?></p>
-
-      <h5>첨부 파일</h5>
-      <ul>
-<?php foreach ($attaches as $i): ?>
-        <li>
-          <a href="<?=$router->pathFor('file.download', [
-              'file_id' => $i['md5'],
-          ])?>">
-              <?=htmlspecialchars($i['name'])?>
-          </a>
-        </li>
-<?php endforeach; ?>
-      </ul>
-
-      <h5>참여 회원</h5>
-      <ul>
-<?php foreach ($attends as $i): ?>
-        <li><?=$i['gen']?>기 <?=htmlspecialchars($i['name'])?>
-<?php endforeach; ?>
-      </ul>
+    <h2 class="mb-1"><?=htmlspecialchars($activity['purpose'])?></h5>
+    <div class="mb-3">
+      <i class="fas fa-users" title="참여 회원 수"></i> <?=count($attends)?>명
+      <i class="fas fa-location-arrow" title="활동 장소"></i> <?=$activity['place']?>
+      <i class="fas fa-calendar-alt" title="활동 시간"></i> <time><?=date('Y-m-d H:i', $start)?></time> ~ <?=date((date('d', $start) != date('d', $end) ? 'Y-m-d ' : '') . 'H:i', $end)?>
     </div>
+
+    <!-- // TODO: markdown converter로 바꾸기 -->
+    <p><?=nl2br(htmlspecialchars($activity['content']))?></p>
+
+    <h5>첨부 파일</h5>
+    <ul>
+<?php foreach ($attaches as $i): ?>
+      <li>
+        <a href="<?=$router->pathFor('file.download', [
+            'file_id' => $i['md5'],
+        ])?>">
+            <?=htmlspecialchars($i['name'])?>
+        </a>
+      </li>
+<?php endforeach; ?>
+    </ul>
+
+    <h5>참여 회원</h5>
+    <ul>
+<?php foreach ($attends as $i): ?>
+      <li><?=$i['gen']?>기 <?=htmlspecialchars($i['name'])?>
+<?php endforeach; ?>
+    </ul>
   </div>
 
 </html>
