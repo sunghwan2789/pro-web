@@ -164,8 +164,9 @@ class SourcesController
         $reviewStatus = $request->getQueryParam('review_status');
 
         $sql = 'SELECT submit.source_id, submit.uid, submit.fid, submit.compile, submit.size, submit.date, '
-            . 'member.gen, member.name, submit.tid FROM pro_submit submit '
-            . 'LEFT JOIN pro_members member ON (submit.uid = member.id) ';
+            . 'member.gen, member.name, submit.tid, task.title FROM pro_submit submit '
+            . 'LEFT JOIN pro_members member ON (submit.uid = member.id) '
+            . ' LEFT JOIN pro_tasks task ON (submit.tid = task.idx) ';
         $conds = [];
         $params = [];
         if (!is_null($taskId)) {
