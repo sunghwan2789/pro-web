@@ -70,15 +70,13 @@
 
     <div class="list-group">
 <?php foreach ($activities as $key => $activity): ?>
-      <a class="list-group-item list-group-item-action flex-column align-items-start"
+      <a class="list-group-item list-group-item-action"
           href="<?=$router->pathFor('activity.show', ['activity_id' => $activity['idx']])?>">
-        <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-0"><?=htmlspecialchars($activity['purpose'])?></h5>
-          <span>
-            <i class="fas fa-users"></i> <?=$attendCounts[$key]?>명
-            <i class="fas fa-location-arrow"></i> <?=$activity['place']?>
-            <i class="fas fa-calendar-alt"></i> <?=(new DateTime($activity['start']))->format('Y-m-d')?>
-          </span>
+        <h5 class="mb-1"><?=htmlspecialchars($activity['purpose'])?></h5>
+        <div class="mb-0">
+          <i class="fas fa-users"></i> <?=$attendCounts[$key]?>명
+          <i class="fas fa-location-arrow"></i> <?=$activity['place']?>
+          <i class="fas fa-calendar-alt"></i> <?=(new DateTime($activity['start']))->format('Y-m-d')?>
         </div>
       </a>
 <?php endforeach; ?>

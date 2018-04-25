@@ -1,62 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>프로 활동일지</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-    <style>
-        body {
-            margin: 3em .5em 0 .5em;
-            line-height: 1.6;
-            font-size: 16px;
-            font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-        }
-        body > header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #efefef;
-            border-bottom: 1px solid #ccc;
-            line-height: 2.5em;
-            width: 100%;
-            padding: 0 .5em;
-            box-sizing: border-box;
-            white-space: nowrap;
-            font-weight: bold;
-        }
-        header a {
-            float: right;
-            text-decoration: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>활동일지 - 프로</title>
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
 <body>
-    <header>프로 활동일지 <a href="task.php">과제</a></header>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <div class="container">
+      <span class="navbar-brand">활동일지</span>
+
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a href="<?=$router->pathFor('activity.list')?>" class="nav-link">
+            아카이브
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="<?=$router->pathFor('activity.new')?>">작성</a>
+        </li>
+      </ul>
+
+      <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
+        <button type="submit" class="btn btn-link text-muted" title="로그아웃"><i class="fas fa-sign-out-alt"></i></button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="container">
 <?php
-    $start = strtotime($activity['start']);
-    $end = strtotime($activity['end']);
+  $start = strtotime($activity['start']);
+  $end = strtotime($activity['end']);
 ?>
-    <h2><?=htmlspecialchars($activity['purpose'])?></h2>
-    @<?=$activity['place']?> #<time><?=date('Y-m-d H:i', $start)?></time> ~ <?=date((date('d', $start) != date('d', $end) ? 'Y-m-d ' : '') . 'H:i', $end)?>
+    <div class="flex-column align-items-start">
+      <h2 class="mb-1"><?=htmlspecialchars($activity['purpose'])?></h5>
+      <div class="mb-3">
+        <i class="fas fa-users" title="참여 회원 수"></i> <?=count($attends)?>명
+        <i class="fas fa-location-arrow" title="활동 장소"></i> <?=$activity['place']?>
+        <i class="fas fa-calendar-alt" title="활동 시간"></i> <time><?=date('Y-m-d H:i', $start)?></time> ~ <?=date((date('d', $start) != date('d', $end) ? 'Y-m-d ' : '') . 'H:i', $end)?>
+      </div>
 
-    <p><?=nl2br(htmlspecialchars($activity['content']))?>
+      <!-- // TODO: markdown converter로 바꾸기 -->
+      <p><?=nl2br(htmlspecialchars($activity['content']))?></p>
 
-
-    <h3>첨부 파일</h3>
-    <ul>
+      <h5>첨부 파일</h5>
+      <ul>
 <?php foreach ($attaches as $i): ?>
-        <li><a href="<?=$router->pathFor('file.download', [
-            'file_id' => $i['md5'],
-        ])?>">
-            <?=htmlspecialchars($i['name'])?>
-        </a>
+        <li>
+          <a href="<?=$router->pathFor('file.download', [
+              'file_id' => $i['md5'],
+          ])?>">
+              <?=htmlspecialchars($i['name'])?>
+          </a>
+        </li>
 <?php endforeach; ?>
-    </ul>
+      </ul>
 
-    <h3>참여 회원</h3>
-    <ul>
+      <h5>참여 회원</h5>
+      <ul>
 <?php foreach ($attends as $i): ?>
         <li><?=$i['gen']?>기 <?=htmlspecialchars($i['name'])?>
 <?php endforeach; ?>
-    </ul>
+      </ul>
+    </div>
+  </div>
+
 </html>
