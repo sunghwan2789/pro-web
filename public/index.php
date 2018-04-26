@@ -32,7 +32,7 @@ $container['view'] = function ($c) {
             'request' => $c->request,
             'response' => $c->response,
             'config' => $c->config,
-            'basePath' => $c->config->get('app.basePath'),
+            'basePath' => getenv('APP_BASE_PATH'),
         ]
     );
 };
