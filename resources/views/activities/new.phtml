@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>활동일지 - 프로</title>
-  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?=$basePath?>node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
   <style>
     label {
@@ -24,7 +24,7 @@
 <body>
   <nav class="navbar navbar-expand navbar-dark bg-dark">
     <div class="container">
-      <a href="/" class="navbar-brand">활동일지</a>
+      <a href="<?=$basePath?>" class="navbar-brand">활동일지</a>
 
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
@@ -82,7 +82,7 @@
     </form>
   </div>
 
-  <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="<?=$basePath?>node_modules/jquery/dist/jquery.min.js"></script>
   <script>
     $('select').on('change', function(e) {
       e.preventDefault();

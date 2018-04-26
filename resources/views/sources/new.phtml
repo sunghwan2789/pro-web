@@ -19,8 +19,8 @@ EOP;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>프로 과제 제출</title>
-    <link rel="stylesheet" href="/node_modules/codemirror/lib/codemirror.css">
-    <link rel="stylesheet" href="/node_modules/codemirror/theme/mdn-like.css">
+    <link rel="stylesheet" href="<?=$basePath?>node_modules/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="<?=$basePath?>node_modules/codemirror/theme/mdn-like.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
     <style>
         body {
@@ -169,9 +169,9 @@ EOP;
             <span>&#9786;참 잘했어요.</span>
         </div>
     </form>
-    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="/node_modules/codemirror/lib/codemirror.js"></script>
-    <script src="/node_modules/codemirror/mode/clike/clike.js"></script>
+    <script src="<?=$basePath?>node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="<?=$basePath?>node_modules/codemirror/lib/codemirror.js"></script>
+    <script src="<?=$basePath?>node_modules/codemirror/mode/clike/clike.js"></script>
     <script>
         var code = CodeMirror.fromTextArea($('textarea')[0], {
             indentUnit: 4,
