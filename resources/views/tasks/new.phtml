@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>과제 - 프로</title>
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+  <style>
+    label {
+      display: block;
+    }
+  </style>
+<body>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <div class="container">
+      <a href="/" class="navbar-brand">과제</a>
+
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a href="<?=$router->pathFor('task.index')?>" class="nav-link">
+            진행 중
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="<?=$router->pathFor('task.list')?>" class="nav-link">
+            아카이브
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a href="<?=$router->pathFor('task.new')?>" class="nav-link">
+            게시
+          </a>
+        </li>
+      </ul>
+
+      <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
+        <button type="submit" class="btn btn-link text-muted" title="로그아웃"><i class="fas fa-sign-out-alt"></i></button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="container">
+    <form action="<?=$router->pathFor('task.store')?>" method="post">
+      <div class="form-group">
+        <label>시작: <input name="start" class="form-control" type="text" placeholder="2015-04-13" pattern="\d{4}-\d{2}-\d{2}" required></label>
+      </div>
+      <div class="form-group">
+        <label>종료: <input name="end" class="form-control" type="text" placeholder="2015-04-13" pattern="\d{4}-\d{2}-\d{2}" required></label>
+      </div>
+      <div class="form-group">
+        <label class="mb-0">제목: <input name="title" class="form-control" required></label>
+      </div>
+      <div class="form-group">
+        <label class="mb-0">내용: <textarea name="content" class="form-control" rows="10"></textarea></label>
+        <button class="span btn btn-block btn-secondary" type="button">늘이기</button>
+      </div>
+      <div class="form-row">
+        <div class="col-sm">
+          <div class="form-group">
+            <label>
+              예시 입력:
+              <textarea name="in" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+            </label>
+          </div>
+        </div>
+        <div class="col-sm">
+          <div class="form-group">
+            <label>
+              예시 출력:
+              <textarea name="out" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block">저장하기</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+  <script>
+    $('.span').on('click', function(e) {
+      e.preventDefault();
+      var target = $('textarea', $(this).prev());
+      target.height(target.height() + 150);
+    });
+    $('[name=start]').on('input propertychange', function() {
+      $('[name=end]').val($(this).val());
+    });
+    $('form').on('submit', function(e) {
+      if (!confirm('과제를 제대로 입력했나요?'))
+      {
+        e.preventDefault();
+        return;
+      }
+    });
+  </script>
+</html>

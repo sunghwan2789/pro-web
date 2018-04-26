@@ -67,8 +67,7 @@
         <ul id="attends"><li>누르면 지워집니다.</ul><!-- ul > li > input[name=attend[]] -->
       </div>
       <div class="form-group">
-        <label class="mb-0">목적: <textarea name="purpose" class="form-control" rows="1" required></textarea></label>
-        <button class="span btn btn-block btn-secondary" type="button">늘이기</button>
+        <label class="mb-0">목적: <input name="purpose" class="form-control" required></label>
       </div>
       <div class="form-group">
         <label class="mb-0">내용: <textarea name="content" class="form-control" rows="10"></textarea></label>
@@ -104,12 +103,6 @@
       $('option[value=' + $('input', this).val() + ']').show().removeProp('tab-index');
       $(this).remove();
     });
-    $('[name=purpose]').on('keypress', function(e) {
-      if (e.keyCode == 13) // ENTER
-      {
-        e.preventDefault();
-      }
-    });
     $('.span').on('click', function(e) {
       e.preventDefault();
       var target = $('textarea', $(this).prev());
@@ -119,7 +112,7 @@
       $('[name=end]').val($(this).val());
     });
     $('form').on('submit', function(e) {
-      if (!confirm('활동 정보를 제대로 기입했나요?'))
+      if (!confirm('활동 정보를 제대로 입력했나요?'))
       {
         e.preventDefault();
         return;

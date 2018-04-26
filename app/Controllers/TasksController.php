@@ -52,18 +52,66 @@ class TasksController
         return $response;
     }
 
-    /** GET /tasks */
+    /** GET /new */
+    public function new(Request $request, Response $response)
+    {
+        $query = $this->db->prepare('SELECT authority FROM pro_members WHERE id = ?');
+        $query->bindValue(1, $_SESSION['uid']);
+        $query->execute();
+        if ($query->fetchColumn() > 0)
+        {
+            echo '권한 없음';
+            return $response;
+        }
+
+        $this->view->render($response, 'tasks/new.phtml');
+        return $response;
+    }
+
+    /** POST /new */
+    public function store(Request $request, Response $response)
+    {
+        $query = $this->db->prepare('SELECT authority FROM pro_members WHERE id = ?');
+        $query->bindValue(1, $_SESSION['uid']);
+        $query->execute();
+        if ($query->fetchColumn() > 0)
+        {
+            echo '권한 없음';
+            return $response;
+        }
+
+        $query = $this->db->prepare(
+            'INSERT INTO pro_tasks (`start`, `end`, title, content, `in`, `out`) ' .
+            'VALUES (?, ?, ?, ?, ?, ?)'
+        );
+        $query->bindValue(1, $_POST['start']);
+        $query->bindValue(2, $_POST['end']);
+        $query->bindValue(3, $_POST['title']);
+        $query->bindValue(4, $_POST['content']);
+        $query->bindValue(5, $_POST['in']);
+        $query->bindValue(6, $_POST['out']);
+        $query->execute();
+
+        $taskId = $this->db->lastInsertId();
+
+        return $response
+            ->withStatus(303)
+            ->withHeader('Location', $this->router->pathFor('task.show', [
+                'task_id' => $taskId,
+            ]));
+    }
+
+    /** GET / */
     public function index(Request $request, Response $response)
     {
         $todayStr = date('Y-m-d');
 
         $query = $this->db->prepare(
-            'SELECT idx, title, date FROM pro_tasks'
-            . ' WHERE date BETWEEN :start AND :end OR date BETWEEN :start AND :end'
+            'SELECT idx, title, `start`, `end` FROM pro_tasks'
+            . ' WHERE end >= :end'
             // order by endDate desc
-            . ' ORDER BY date DESC'
+            . ' ORDER BY end ASC'
         );
-        $query->bindParam(':start', $todayStr);
         $query->bindParam(':end', $todayStr);
         $query->execute();
         $tasks = $query->fetchAll();
@@ -91,10 +139,10 @@ class TasksController
         $endDateStr = $endDate->format('Y-m-d');
 
         $query = $this->db->prepare(
-            'SELECT idx, title, date FROM pro_tasks'
-            . ' WHERE date BETWEEN :start AND :end OR date BETWEEN :start AND :end'
+            'SELECT idx, title, start, end FROM pro_tasks'
+            . ' WHERE start BETWEEN :start AND :end OR end BETWEEN :start AND :end'
             // order by endDate desc
-            . ' ORDER BY date DESC'
+            . ' ORDER BY start DESC'
         );
         $query->bindParam(':start', $startDateStr);
         $query->bindParam(':end', $endDateStr);

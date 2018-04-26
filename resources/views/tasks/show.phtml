@@ -36,12 +36,12 @@ EOP;
       <a href="/" class="navbar-brand">과제</a>
 
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
+        <li class="nav-item">
           <a href="<?=$router->pathFor('task.index')?>" class="nav-link">
             진행 중
           </a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item active">
           <a href="<?=$router->pathFor('task.list')?>" class="nav-link">
             아카이브
           </a>
@@ -62,8 +62,8 @@ EOP;
   <div class="container">
     <h2 class="mb-1"><?=htmlspecialchars($task['title'])?></h2>
     <div class="mb-3">
-      <i class="fas fa-calendar-alt" title="게시일"></i> <time><?=$task['date']?></time>
-      <i class="fas fa-calendar-check" title="마감일"></i> <?=$task['date']?>
+      <i class="fas fa-calendar-alt" title="게시일"></i> <time><?=$task['start']?></time>
+      <i class="fas fa-calendar-check" title="마감일"></i> <?=$task['end']?>
     </div>
 
     <!-- // TODO: markdown converter로 바꾸기 -->
