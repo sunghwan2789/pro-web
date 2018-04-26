@@ -101,7 +101,12 @@ class SourcesController
     {
         $sourceId = $args['source_id'];
 
-        $query = $this->db->prepare('SELECT * FROM pro_submit WHERE source_id = ?');
+        $query = $this->db->prepare(
+            'SELECT s.source_id, s.uid, s.tid, s.fid, s.compile, s.size, s.date, '
+            . ' m.gen, m.name, t.title FROM pro_submit s '
+            . ' LEFT JOIN pro_members m ON (m.id = s.uid) '
+            . ' LEFT JOIN pro_tasks t ON (t.idx = s.tid) '
+            . ' WHERE source_id = ?');
         $query->bindValue(1, $sourceId);
         $query->execute();
         $source = $query->fetch();
@@ -110,14 +115,17 @@ class SourcesController
             throw new \Exception('not found');
         }
 
+        $stream = $this->getSourceStream($source);
+        // BOM 마크 건너뛰기
+        $stream->seek(3);
         $this->view->render($response, 'sources/show.phtml', [
             'source' => $source,
-            'stream' => $this->getSourceStream($source),
+            'stream' => $stream,
         ]);
         return $response;
     }
 
-    private function getSourceStream($source)
+    private function getSourceStream($source): Stream
     {
         $basePath = $this->config->get('storage.sources');
         $path = $basePath . "/{$source['tid']}_{$source['uid']}_{$source['fid']}.c";

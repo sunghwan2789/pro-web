@@ -26,14 +26,15 @@
   </nav>
 
   <div class="container">
-    <table class="table">
+    <div class="table-responsive">
+    <table class="table" style="white-space: nowrap">
     <thead>
       <tr>
         <th>#</th>
         <th>제출한 사람</th>
         <th>과제</th>
         <th>컴파일</th>
-        <th>코드 길이</th>
+        <th>길이</th>
         <th>제출한 시간</th>
       </tr>
     </thead>
@@ -47,10 +48,13 @@
           </a>
         </td>
         <td>
-          <a href="<?=$router->pathFor('task.show', ['task_id' => $source['tid']])?>"
-              title="<?=htmlentities($source['title'])?>">
+          <a href="?task_id=<?=$source['tid']?>" title="<?=htmlentities($source['title'])?>">
             <?=$source['tid']?>
-          </a>
+          </a><small>
+            <a href="<?=$router->pathFor('task.show', ['task_id' => $source['tid']])?>">
+              <i class="fas fa-external-link-alt"></i>
+            </a>
+          </small>
         </td>
         <td><?=['실패','성공'][$source['compile']]?></td>
         <td>
@@ -63,6 +67,7 @@
 <?php endforeach; ?>
     </tbody>
     </table>
+    </div>
   </div>
 
 </html>
