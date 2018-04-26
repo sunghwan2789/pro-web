@@ -33,7 +33,7 @@ EOP;
 <body>
   <nav class="navbar navbar-expand navbar-dark bg-dark">
     <div class="container">
-      <span class="navbar-brand">과제</span>
+      <a href="/" class="navbar-brand">과제</a>
 
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
@@ -84,8 +84,12 @@ EOP;
     <form id="submit" action="<?=$router->pathFor('source.store', [
       'task_id' => $task['idx'],
     ])?>" method="post">
-      <textarea id="source" name="source" wrap="off" required class="w-100" style="display: block"><?=$C_BASE?></textarea>
-      <button type="submit" class="btn btn-primary d-block w-100 mt-1">제출하기</button>
+      <div class="form-group">
+        <textarea id="source" name="source" class="form-control" wrap="off" rows="10" required><?=$C_BASE?></textarea>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block">제출하기</button>
+      </div>
     </form>
   </div>
 

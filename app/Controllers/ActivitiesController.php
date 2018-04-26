@@ -128,7 +128,7 @@ class ActivitiesController
         return $response
             ->withStatus(303)
             ->withHeader('Location', $this->router->pathFor('activity.show', [
-                'activityId' => $activityId,
+                'activity_id' => $activityId,
             ]));
     }
 
