@@ -37,7 +37,7 @@ $container['view'] = function ($c) {
 };
 
 
-$app->get('/', App\Controllers\HomeController::class . ':index');
+$app->get('/', App\Controllers\HomeController::class . ':index')->setName('root');
 $app->get('/login', App\Controllers\SessionController::class . ':login')->setName('login');
 $app->post('/login', App\Controllers\SessionController::class . ':store')->setName('session.store');
 $app->post('/register', App\Controllers\SessionController::class . ':register')->setName('session.register');
