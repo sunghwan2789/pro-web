@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>소스코드 - 프로</title>
-  <link rel="stylesheet" href="<?=$router->pathFor('root')?>node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?=$basePath?>node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-  <link rel="stylesheet" href="<?=$router->pathFor('root')?>node_modules/codemirror/lib/codemirror.css">
-  <link rel="stylesheet" href="<?=$router->pathFor('root')?>node_modules/codemirror/theme/mdn-like.css">
+  <link rel="stylesheet" href="<?=$basePath?>node_modules/codemirror/lib/codemirror.css">
+  <link rel="stylesheet" href="<?=$basePath?>node_modules/codemirror/theme/mdn-like.css">
   <style>
     .CodeMirror {
         height: auto;
@@ -16,7 +16,7 @@
 <body>
   <nav class="navbar navbar-expand navbar-dark bg-dark">
     <div class="container">
-      <a href="<?=$router->pathFor('root')?>" class="navbar-brand">소스코드</a>
+      <a href="<?=$basePath?>" class="navbar-brand">소스코드</a>
 
       <ul class="navbar-nav mr-auto">
         <li class="nav-item active">
@@ -77,8 +77,8 @@
     <textarea id="source" class="w-100" style="display:block"><?=htmlspecialchars($stream->getContents())?></textarea>
   </div>
 
-  <script src="<?=$router->pathFor('root')?>node_modules/codemirror/lib/codemirror.js"></script>
-  <script src="<?=$router->pathFor('root')?>node_modules/codemirror/mode/clike/clike.js"></script>
+  <script src="<?=$basePath?>node_modules/codemirror/lib/codemirror.js"></script>
+  <script src="<?=$basePath?>node_modules/codemirror/mode/clike/clike.js"></script>
   <script>
     var code = CodeMirror.fromTextArea(document.getElementById('source'), {
       indentUnit: 4,
