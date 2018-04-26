@@ -66,8 +66,7 @@ EOP;
       <i class="fas fa-calendar-check" title="마감일"></i> <?=$task['end']?>
     </div>
 
-    <!-- // TODO: markdown converter로 바꾸기 -->
-    <div class="mb-3" style="text-align: justify"><?=$task['content']?></div>
+    <div class="mb-3" style="text-align: justify"><?=(new Parsedown())->text($task['content'])?></div>
 
     <aside class="row">
       <div class="col-sm">
