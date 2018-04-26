@@ -41,11 +41,11 @@ $app->get('/', App\Controllers\HomeController::class . ':index');
 $app->get('/login', App\Controllers\SessionController::class . ':login')->setName('login');
 $app->post('/login', App\Controllers\SessionController::class . ':store')->setName('session.store');
 $app->post('/register', App\Controllers\SessionController::class . ':register')->setName('session.register');
-$app->get('/logout', App\Controllers\SessionController::class . ':destroy')->setName('logout');
+$app->post('/logout', App\Controllers\SessionController::class . ':destroy')->setName('logout');
 $app->group('/activities', function () {
     $this->get('/new', App\Controllers\ActivitiesController::class . ':new')->setName('activity.new');
     $this->post('/new', App\Controllers\ActivitiesController::class . ':store')->setName('activity.store');
-    $this->get('/archive[/{year}[/{month}[/{date}]]]', App\Controllers\ActivitiesController::class . ':list')->setName('activity.list');
+    $this->get('/archive[/{year}[/{month}]]', App\Controllers\ActivitiesController::class . ':list')->setName('activity.list');
     $this->get('/{activity_id}', App\Controllers\ActivitiesController::class . ':show')->setName('activity.show');
     $this->get('/{activity_id}/edit', App\Controllers\ActivitiesController::class . ':edit');
     $this->post('/{activity_id}/put', App\Controllers\ActivitiesController::class . ':update');
@@ -56,6 +56,7 @@ $app->group('/tasks', function () {
     $this->get('', App\Controllers\TasksController::class . ':index')->setName('task.index');
     $this->get('/new', App\Controllers\TasksController::class . ':new')->setName('task.new');
     $this->post('/new', App\Controllers\TasksController::class . ':store')->setName('task.store');
+    $this->get('/archive[/{year}[/{month}]]', App\Controllers\TasksController::class . ':list')->setName('task.list');
     $this->get('/{task_id}', App\Controllers\TasksController::class . ':show')->setName('task.show');
     $this->get('/{task_id}/edit', App\Controllers\TasksController::class . ':edit');
     $this->post('/{task_id}/put', App\Controllers\TasksController::class . ':update');

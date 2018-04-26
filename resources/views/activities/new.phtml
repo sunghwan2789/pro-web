@@ -1,128 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>프로 활동일지 작성</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-    <style>
-        body {
-            margin: 3em .5em 0 .5em;
-            line-height: 1.6;
-        }
-        body, input, button, textarea, select {
-            font-size: 16px;
-            font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-        }
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #efefef;
-            border-bottom: 1px solid #ccc;
-            line-height: 2.5em;
-            width: 100%;
-            padding: 0 .5em;
-            box-sizing: border-box;
-            white-space: nowrap;
-            font-weight: bold;
-            text-align: right;
-        }
-        span {
-            float: left;
-        }
-        header button {
-            vertical-align: middle;
-        }
-        label {
-            display: block;
-            margin-bottom: .5em;
-        }
-        textarea {
-            vertical-align: top;
-            display: block;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        textarea[name=content] {
-            height: 300px;
-        }
-        .span {
-            margin-top: -.5em;
-            display: block;
-            width: 100%;
-            margin-bottom: 1em;
-        }
-        li {
-            cursor: pointer;
-        }
-        li:hover {
-            background: #f5f5f5;
-        }
-        li:hover::after {
-            content: '\2717';
-            float: right;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>활동일지 - 프로</title>
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+  <style>
+    label {
+      display: block;
+    }
+    #attends li {
+      cursor: pointer;
+    }
+    #attends li:hover {
+      background: #f5f5f5;
+    }
+    #attends li:hover::after {
+      content: '\2717';
+      float: right;
+    }
+  </style>
 <body>
-    <form action="<?=$router->pathFor('activity.store')?>" method="POST" enctype="multipart/form-data">
-        <header><span>프로 활동일지 작성</span><button type="submit">&#10004;</button></header>
-        <label>모임장소: <input name="place" type="text" placeholder="M502"></label>
-        <label>시작: <input name="start" type="text" placeholder="2015-04-13 15:00" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}" required></label>
-        <label>종료: <input name="end" type="text" placeholder="2015-04-13 16:00" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}" required></label>
-        <ul><li>누르면 지워집니다.</ul><!-- ul > li > input[name=attend[]] -->
-        <label>참여 회원: <select><option></option><?php
-            foreach ($members as $member)
-            {
-                echo '<option value="', $member['id'], '">',
-                     $member['id'], ' ', $member['gen'], '기 ', $member['name'];
-            }
-        ?></select></label>
-        <label>목적: <textarea name="purpose" rows="1" required></textarea></label><button class="span">늘이기</button>
-        <label>내용: <textarea name="content"></textarea></label><button class="span">늘이기</button>
-        <label>파일 첨부: <input name="attach[]" type="file" multiple></label>
-    </form>
-    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <script>
-        $('select').on('change', function(e) {
-            e.preventDefault();
-            var option = $(this.selectedOptions[0]);
-            if (!option.val().length)
-            {
-                return;
-            }
-            $(this).val('');
-            option.hide().prop('tab-index', -1);
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <div class="container">
+      <a href="/" class="navbar-brand">활동일지</a>
 
-            $('ul').append(
-                $('<li>').text(option.text())
-                    .append($('<input>', { name: 'attend[]', value: option.val(), type: 'hidden' })));
-        });
-        $(document).on('click', 'li', function(e) {
-            e.preventDefault();
-            $('option[value=' + $('input', this).val() + ']').show().removeProp('tab-index');
-            $(this).remove();
-        });
-        $('[name=purpose]').on('keypress', function(e) {
-            if (e.keyCode == 13) // ENTER
-            {
-                e.preventDefault();
-            }
-        });
-        $('.span').on('click', function(e) {
-            e.preventDefault();
-            var target = $('textarea', $(this).prev());
-            target.height(target.height() + 150);
-        });
-        $('[name=start]').on('input propertychange', function() {
-            $('[name=end]').val($(this).val());
-        });
-        $('form').on('submit', function(e) {
-            if (!confirm('활동 정보를 제대로 기입했나요?'))
-            {
-                e.preventDefault();
-                return;
-            }
-        });
-    </script>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a href="<?=$router->pathFor('activity.list')?>" class="nav-link">
+            아카이브
+          </a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="<?=$router->pathFor('activity.new')?>">작성</a>
+        </li>
+      </ul>
+
+      <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
+        <button type="submit" class="btn btn-link text-muted" title="로그아웃"><i class="fas fa-sign-out-alt"></i></button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="container">
+    <form action="<?=$router->pathFor('activity.store')?>" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <label>모임장소: <input name="place" class="form-control" type="text" placeholder="M502"></label>
+      </div>
+      <div class="form-group">
+        <label>시작: <input name="start" class="form-control" type="text" placeholder="2015-04-13 15:00" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}" required></label>
+      </div>
+      <div class="form-group">
+        <label>종료: <input name="end" class="form-control" type="text" placeholder="2015-04-13 16:00" pattern="\d{4}-\d{2}-\d{2} \d{2}:\d{2}" required></label>
+      </div>
+      <div class="form-group">
+        <label>참여 회원: <select class="form-control">
+          <option></option>
+<?php foreach ($members as $member): ?>
+          <option value="<?=$member['id']?>">
+            <?="{$member['id']} {$member['gen']}기 {$member['name']}"?>
+          </option>
+<?php endforeach; ?>
+        </select></label>
+
+        <ul id="attends"><li>누르면 지워집니다.</ul><!-- ul > li > input[name=attend[]] -->
+      </div>
+      <div class="form-group">
+        <label class="mb-0">목적: <input name="purpose" class="form-control" required></label>
+      </div>
+      <div class="form-group">
+        <label class="mb-0">내용: <textarea name="content" class="form-control" rows="10"></textarea></label>
+        <button class="span btn btn-block btn-secondary" type="button">늘이기</button>
+      </div>
+      <div class="form-group">
+        <label>파일 첨부: <input name="attach[]" type="file" multiple></label>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block">저장하기</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+  <script>
+    $('select').on('change', function(e) {
+      e.preventDefault();
+      var option = $(this.selectedOptions[0]);
+      if (!option.val().length)
+      {
+        return;
+      }
+      $(this).val('');
+      option.hide().prop('tab-index', -1);
+
+      $('#attends').append(
+        $('<li>').text(option.text())
+          .append($('<input>', { name: 'attend[]', value: option.val(), type: 'hidden' })));
+    });
+    $(document).on('click', '#attends li', function(e) {
+      e.preventDefault();
+      $('option[value=' + $('input', this).val() + ']').show().removeProp('tab-index');
+      $(this).remove();
+    });
+    $('.span').on('click', function(e) {
+      e.preventDefault();
+      var target = $('textarea', $(this).prev());
+      target.height(target.height() + 150);
+    });
+    $('[name=start]').on('input propertychange', function() {
+      $('[name=end]').val($(this).val());
+    });
+    $('form').on('submit', function(e) {
+      if (!confirm('활동 정보를 제대로 입력했나요?'))
+      {
+        e.preventDefault();
+        return;
+      }
+    });
+  </script>
 </html>

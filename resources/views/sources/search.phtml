@@ -1,100 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <title>프로 과제 채점</title>
-    <link rel="stylesheet" href="/node_modules/codemirror/lib/codemirror.css">
-    <link rel="stylesheet" href="/node_modules/codemirror/theme/mdn-like.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/notosanskr.css">
-    <style>
-        body {
-            margin: 3em .5em 0 .5em;
-            line-height: 1.6;
-            font-size: 16px;
-            font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
-        }
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #efefef;
-            border-bottom: 1px solid #ccc;
-            line-height: 2.5em;
-            width: 100%;
-            padding: 0 .5em;
-            box-sizing: border-box;
-            white-space: nowrap;
-            font-weight: bold;
-            text-align: right;
-        }
-            header span {
-                float: left;
-            }
-            header time {
-                float: right;
-                font-size: initial;
-                font-weight: initial;
-            }
-        #dest {
-            position: fixed;
-            right: 0;
-            top: 40px;
-            bottom: 0;
-            width: calc(100% - 400px);
-        }
-        #dest .CodeMirror {
-            height: 100%;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>소스코드 - 프로</title>
+  <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
 <body>
-    <header><span><?=htmlspecialchars("$ task['title']")?></span><button>&#8606;</button></header>
-    <table>
-        <thead><tr><th>기수<th>이름<th>컴파일<th>코드 길이<th>제출한 시간
-        <tbody>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <div class="container">
+      <a href="/" class="navbar-brand">소스코드</a>
+
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a href="<?=$router->pathFor('task.list')?>" class="nav-link">
+            검색
+          </a>
+        </li>
+      </ul>
+
+      <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
+        <button type="submit" class="btn btn-link text-muted" title="로그아웃"><i class="fas fa-sign-out-alt"></i></button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="table-responsive">
+    <table class="table" style="white-space: nowrap">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>제출한 사람</th>
+        <th>과제</th>
+        <th>컴파일</th>
+        <th>길이</th>
+        <th>제출한 시간</th>
+      </tr>
+    </thead>
+    <tbody>
 <?php foreach ($sources as $source): ?>
-            <tr>
-                <td><?=$source['gen']?>기
-                <td><?=$source['name']?>
-
-                <td><?=[ 'x', 'o' ][$source['compile']]?>
-
-                <td><a href="<?=$router->pathFor('source.show', [
-                        'source_id' => $source['source_id'],
-                    ])?>"><?=$source['size']?>B</a>
-                <td><?=$source['date']?>
-
+      <tr>
+        <td><?=$source['source_id']?></td>
+        <td>
+          <a href="?user_id=<?=$source['uid']?>">
+            <?=$source['gen']?>기 <?=$source['name']?>
+          </a>
+        </td>
+        <td>
+          <a href="?task_id=<?=$source['tid']?>" title="<?=htmlentities($source['title'])?>">
+            <?=$source['tid']?>
+          </a><small>
+            <a href="<?=$router->pathFor('task.show', ['task_id' => $source['tid']])?>">
+              <i class="fas fa-external-link-alt"></i>
+            </a>
+          </small>
+        </td>
+        <td><?=['실패','성공'][$source['compile']]?></td>
+        <td>
+          <a href="<?=$router->pathFor('source.show', ['source_id' => $source['source_id']])?>">
+            <?=$source['size']?>B
+          </a>
+        </td>
+        <td><?=$source['date']?></td>
+      </tr>
 <?php endforeach; ?>
+    </tbody>
     </table>
-    <div id="dest"></div>
-    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="/node_modules/codemirror/lib/codemirror.js"></script>
-    <script src="/node_modules/codemirror/mode/clike/clike.js"></script>
-    <script>
-        var xhr;
-        $('a').on('click', function(e) {
-            e.preventDefault();
-            if (xhr)
-            {
-                xhr.abort();
-            }
-            xhr = $.ajax({
-                    url: this,
-                }).done(function(src) {
-                    CodeMirror($('#dest').empty()[0], {
-                        value: src,
-                        indentUnit: 4,
-                        mode: 'clike',
-                        readOnly: true,
-                        lineNumbers: true,
-                        theme: 'mdn-like',
-                        lineWrapping: true
-                    });
-                });
-        });
-        $('button').on('click', function(e) {
-            e.preventDefault();
-            window.location.href = 'task.php';
-        })
-    </script>
+    </div>
+  </div>
+
 </html>

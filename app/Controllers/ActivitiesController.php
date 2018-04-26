@@ -4,6 +4,7 @@ namespace App\Controllers;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+use DateTime;
 
 class ActivitiesController
 {
@@ -127,7 +128,7 @@ class ActivitiesController
         return $response
             ->withStatus(303)
             ->withHeader('Location', $this->router->pathFor('activity.show', [
-                'activityId' => $activityId,
+                'activity_id' => $activityId,
             ]));
     }
 
@@ -170,6 +171,49 @@ class ActivitiesController
             'activity' => $activity,
             'attends' => $attends,
             'attaches' => $attaches,
+        ]);
+        return $response;
+    }
+
+    /** GET /archive[/{year}[/{month}]] */
+    public function list(Request $request, Response $response, array $args)
+    {
+        $startDate = (new DateTime())->setTimestamp(0);
+        $endDate = new DateTime();
+        if (!empty($args['year'])) {
+            $startDate->setDate($args['year'], 1, 1);
+            $endDate = (clone $startDate)->modify('+1 year');
+            if (!empty($args['month'])) {
+                $startDate->setDate($args['year'], $args['month'], 1);
+                $endDate = (clone $startDate)->modify('+1 month')->modify('-1 day');
+            }
+        }
+        $startDateStr = $startDate->format('Y-m-d');
+        $endDateStr = $endDate->format('Y-m-d');
+
+        $query = $this->db->prepare(
+            'SELECT idx, start, purpose, content, place FROM pro_activities'
+            . ' WHERE start BETWEEN :start AND :end OR end BETWEEN :start AND :end'
+            . ' ORDER BY start DESC'
+        );
+        $query->bindParam(':start', $startDateStr);
+        $query->bindParam(':end', $endDateStr);
+        $query->execute();
+        $activities = $query->fetchAll();
+
+        $attends = [];
+        foreach ($activities as $activity) {
+            $query = $this->db->prepare('SELECT count(*) FROM pro_activity_attend WHERE aid = ?');
+            $query->execute([$activity['idx']]);
+            $attends[] = $query->fetchColumn();
+        }
+
+        $this->view->render($response, 'activities/archive.phtml', [
+            'displayYear' => $args['year'],
+            'displayMonth' => $args['month'],
+            'shouldDisplayMonthFilter' => !empty($args['year']),
+            'activities' => $activities,
+            'attendCounts' => $attends,
         ]);
         return $response;
     }
