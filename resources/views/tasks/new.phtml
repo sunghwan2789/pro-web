@@ -52,7 +52,7 @@
         <label class="mb-0">제목: <input name="title" class="form-control" required></label>
       </div>
       <div class="form-group">
-        <label class="mb-0">내용: <textarea name="content" class="form-control" rows="10"></textarea></label>
+        <label class="mb-0" for="content"><span class="float-left">내용: </span><textarea name="content" class="form-control markdown-edit" rows="10"></textarea></label>
         <button class="span btn btn-block btn-secondary" type="button">늘이기</button>
       </div>
       <div class="form-row">
@@ -80,6 +80,7 @@
   </div>
 
   <script src="<?=$basePath?>node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="<?=$basePath?>_data/markdown-edit.js"></script>
   <script>
     $('.span').on('click', function(e) {
       e.preventDefault();
