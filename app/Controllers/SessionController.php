@@ -67,16 +67,14 @@ class SessionController
             throw new \Exception('pw is wrong');
         }
 
+        session_start([
+            'cookie_lifetime' => 60 * 60 * 24 * 7 * 4 * ($post['keep'] === 'on'),
+            'cookie_path' => getenv('APP_BASE_PATH')
+        ]);
         // this is how to prevent using obsolete session
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            session_regenerate_id();
-        } else {
-            session_start([
-                'cookie_lifetime' => 60 * 60 * 24 * 7 * 4 * ($post['keep'] === 'on'),
-                'cookie_path' => getenv('APP_BASE_PATH')
-            ]);
-        }
+        session_regenerate_id();
         $_SESSION['uid'] = $post['id'];
+        session_write_close();
 
         $query = $this->db->prepare('INSERT INTO pro_member_log SET uid = ?, `text` = ?');
         $query->bindValue(1, $post['id']);
@@ -124,16 +122,15 @@ class SessionController
     /** GET /logout */
     public function destroy(Request $request, Response $response)
     {
-        if (isset($_COOKIE[session_name()]))
-        {
-            session_start();
-            $_SESSION = [];
-            setcookie(session_name(), null, -1,
-                getenv('APP_BASE_PATH'),
-                $request->getUri()->getHost()
-            );
-            session_destroy();
-        }
+        // 세션 삭제
+        // \App\Middleware\Authenticate::isAuthenticated 에서
+        // 적용한 세션 설정 그대로 사용
+        session_start();
+        session_unset();
+        session_destroy();
+        // 쿠키 삭제
+        setcookie(session_name(), null, -1, getenv('APP_BASE_PATH'));
+
         $this->view->render($response, 'session/logout.phtml');
         return $response;
     }
