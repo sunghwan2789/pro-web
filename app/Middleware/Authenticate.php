@@ -73,6 +73,7 @@ class Authenticate
     {
         $isAuthenticated = false;
         // 세션 쿠키 존재유무 확인
+        session_name(getenv('APP_SESSION_NAME'));
         if (isset($_COOKIE[session_name()])) {
             // 로그인했는지 확인
             session_start(['cookie_path' => getenv('APP_BASE_PATH')]);
