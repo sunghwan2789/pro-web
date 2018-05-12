@@ -67,13 +67,15 @@ class SessionController
             throw new \Exception('pw is wrong');
         }
 
-        session_set_cookie_params(
-            60 * 60 * 24 * 7 * 4 * ($post['keep'] === 'on'),
-            '/',
-            $uri->getHost(),
-            false,
-            true);
-        session_start();
+        // this is how to prevent using obsolete session
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_regenerate_id();
+        } else {
+            session_start([
+                'cookie_lifetime' => 60 * 60 * 24 * 7 * 4 * ($post['keep'] === 'on'),
+                'cookie_path' => getenv('APP_BASE_PATH')
+            ]);
+        }
         $_SESSION['uid'] = $post['id'];
 
         $query = $this->db->prepare('INSERT INTO pro_member_log SET uid = ?, `text` = ?');
@@ -127,8 +129,9 @@ class SessionController
             session_start();
             $_SESSION = [];
             setcookie(session_name(), null, -1,
-                '/', $request->getUri()->getHost(),
-                false, true);
+                getenv('APP_BASE_PATH'),
+                $request->getUri()->getHost()
+            );
             session_destroy();
         }
         $this->view->render($response, 'session/logout.phtml');
