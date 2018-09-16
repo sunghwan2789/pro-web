@@ -105,7 +105,6 @@ class SourcesController
         if ($exitCode != 0) {
             $params['compile'] = 0;
             $params['status'] = $COMPILE_ERROR;
-            $this->insertOrUpdate($params);
             goto SUBMIT;
         }
 
@@ -121,15 +120,14 @@ class SourcesController
         foreach ($query->fetchAll() as $row) {
             file_put_contents($inputPath, $row['input']);
 
+            $output = [];
             exec(implode(' ' , [
                 escapeshellcmd($exePath),
                 '<' . escapeshellarg($inputPath),
             ]), $output, $exitCode);
-            $params['error'] = implode("\n", $output);
 
             if ($exitCode != 0) {
                 $params['status'] = $RUNTIME_ERROR;
-                $this->insertOrUpdate($params);
                 goto SUBMIT;
             }
 
@@ -139,7 +137,6 @@ class SourcesController
 
             for ($i = 0; $i < count($expectedOutput); $i++) {
                 if ($expectedOutput[$i] !== $output[$i]) {
-                    $this->insertOrUpdate($params);
                     goto SUBMIT;
                 }
             }
@@ -148,7 +145,6 @@ class SourcesController
                 if ($i + 1 == count($output) && empty($output[$i])) {
                     // noop
                 } else {
-                    $this->insertOrUpdate($params);
                     goto SUBMIT;
                 }
             }
@@ -158,8 +154,10 @@ class SourcesController
         }
 
         $params['status'] = $SUCCESS;
-        $this->insertOrUpdate($params);
 SUBMIT:
+        $this->insertOrUpdate($params);
+
+        // cleanup
         @unlink($inputPath);
         @unlink($errorPath);
         @unlink($objPath);
