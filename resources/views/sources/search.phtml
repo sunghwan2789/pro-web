@@ -33,7 +33,7 @@
         <th>#</th>
         <th>제출한 사람</th>
         <th>과제</th>
-        <th>컴파일</th>
+        <th>채점 결과</th>
         <th>길이</th>
         <th>제출한 시간</th>
       </tr>
@@ -56,7 +56,7 @@
             </a>
           </small>
         </td>
-        <td><?=['실패','성공'][$source['compile']]?></td>
+        <td><?=['정답','컴파일 에러','런타임 에러',$source['score'] . '점'][$source['status']]?></td>
         <td>
           <a href="<?=$router->pathFor('source.show', ['source_id' => $source['source_id']])?>">
             <?=$source['size']?>B
