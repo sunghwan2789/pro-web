@@ -97,13 +97,11 @@ class SourcesController
         ]), $output, $exitCode);
 
         $params['error'] = implode("\n", array_slice(explode("\n", file_get_contents($errorPath)), 1));
-        $params['compile'] = 1;
         $params['status'] = $PARTIAL_SUCCESS;
         $params['score'] = 0;
         $this->insertOrUpdate($params);
 
         if ($exitCode != 0) {
-            $params['compile'] = 0;
             $params['status'] = $COMPILE_ERROR;
             goto SUBMIT;
         }
@@ -172,8 +170,8 @@ SUBMIT:
     private function insertOrUpdate($params)
     {
         $query = $this->db->prepare(
-            'INSERT INTO pro_submit (tid, uid, fid, compile, size, `status`, `error`, `score`)
-            VALUES (:id, :uid, :fid, :compile, :size, :status, :error, :score)
+            'INSERT INTO pro_submit (tid, uid, fid, size, `status`, `error`, `score`)
+            VALUES (:id, :uid, :fid, :size, :status, :error, :score)
             ON DUPLICATE KEY UPDATE `status` = :status, `score` = :score'
         );
         $query->execute($params);
@@ -185,11 +183,13 @@ SUBMIT:
         $sourceId = $args['source_id'];
 
         $query = $this->db->prepare(
-            'SELECT s.source_id, s.uid, s.tid, s.fid, s.compile, s.size, s.date, '
-            . ' m.gen, m.name, t.title FROM pro_submit s '
-            . ' LEFT JOIN pro_members m ON (m.id = s.uid) '
-            . ' LEFT JOIN pro_tasks t ON (t.idx = s.tid) '
-            . ' WHERE source_id = ?');
+            'SELECT s.source_id, s.uid, s.tid, s.fid, s.size, s.date,
+            m.gen, m.name, t.title, s.status, s.score, s.error
+            FROM pro_submit s
+            LEFT JOIN pro_members m ON (m.id = s.uid)
+            LEFT JOIN pro_tasks t ON (t.idx = s.tid)
+            WHERE source_id = ?'
+        );
         $query->bindValue(1, $sourceId);
         $query->execute();
         $source = $query->fetch();
@@ -254,10 +254,11 @@ SUBMIT:
         $isCompiled = $request->getQueryParam('is_compiled');
         $reviewStatus = $request->getQueryParam('review_status');
 
-        $sql = 'SELECT submit.source_id, submit.uid, submit.fid, submit.compile, submit.size, submit.date, '
-            . 'member.gen, member.name, submit.tid, task.title FROM pro_submit submit '
-            . 'LEFT JOIN pro_members member ON (submit.uid = member.id) '
-            . ' LEFT JOIN pro_tasks task ON (submit.tid = task.idx) ';
+        $sql = 'SELECT submit.source_id, submit.uid, submit.fid, submit.status, submit.size, submit.date,
+            member.gen, member.name, submit.tid, task.title, submit.score, submit.error
+            FROM pro_submit submit
+            LEFT JOIN pro_members member ON (submit.uid = member.id)
+            LEFT JOIN pro_tasks task ON (submit.tid = task.idx) ';
         $conds = [];
         $params = [];
         if (!is_null($taskId)) {
