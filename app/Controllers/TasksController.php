@@ -94,6 +94,20 @@ class TasksController
 
         $taskId = $this->db->lastInsertId();
 
+        if (is_array($_POST['test_score'])) {
+            $query = $this->db->prepare(
+                'INSERT INTO pro_task_tests (`task_id`, `score`, `input`, `output`)
+                VALUES (?, ?, ?, ?)'
+            );
+            for ($i = 0; $i < count($_POST['test_score']); $i++) {
+                $query->bindValue(1, $taskId);
+                $query->bindValue(2, $_POST['test_score'][$i]);
+                $query->bindValue(3, $_POST['test_input'][$i]);
+                $query->bindValue(4, $_POST['test_output'][$i]);
+                $query->execute();
+            }
+        }
+
         return $response
             ->withStatus(303)
             ->withHeader('Location', $this->router->pathFor('task.show', [
