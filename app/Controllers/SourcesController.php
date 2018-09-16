@@ -67,12 +67,11 @@ class SourcesController
         }
 
         $tmpb = implode('', [ $this->config->get('storage.sources') . '/', $taskId, '_', $_SESSION['uid'], '_' ]);
-        for ($i = 1; file_exists($tmp = implode('', [ $tmpb, $i, '.c' ])); $i++);
+        for ($i = 1; file_exists($sourcePath = implode('', [ $tmpb, $i, '.c' ])); $i++) {}
         $params = [ 'id'=> $taskId, 'uid'=> $_SESSION['uid'], 'fid'=> $i ];
 
-        $fp = fopen($tmp, 'wb');
-        if ($fp === false)
-        {
+        $fp = fopen($sourcePath, 'wb');
+        if ($fp === false) {
             throw new \Exception('cannot open file');
         }
         fwrite($fp, pack('C', 0xEF));
@@ -81,19 +80,105 @@ class SourcesController
         $params['size'] = fwrite($fp, $_POST['source']);
         fclose($fp);
 
-        $val = null;
-        exec(implode(' ', [ dirname(dirname(__DIR__)) . '/bin/validate.bat', escapeshellarg($tmp) ]), $val, $val);
-        $val = !($params['compile'] = $val == 0) * 2;
+        $SUCCESS = 0;
+        $COMPILE_ERROR = 1;
+        $RUNTIME_ERROR = 2;
+        $PARTIAL_SUCCESS = 3;
 
-        $query = $this->db->prepare('INSERT INTO pro_submit (tid, uid, fid, compile, size) ' .
-            'VALUES (:id, :uid, :fid, :compile, :size) ' .
-            'ON DUPLICATE KEY UPDATE date = NOW(), compile = :compile, size = :size');
-        /*echo*/ !$query->execute($params) ? $val ? $val : 3 : $val;
+        $errorPath = tempnam(sys_get_temp_dir(), 'PRO_TEST');
+        $objPath = $errorPath . '.obj';
+        $exePath = $errorPath . '.exe';
+        exec(implode(' ', [
+            __DIR__ . '/../../bin/compile.bat',
+            escapeshellarg($sourcePath),
+            escapeshellarg($exePath),
+            escapeshellarg($objPath),
+            escapeshellarg($errorPath),
+        ]), $output, $exitCode);
+
+        $params['error'] = implode("\n", array_slice(explode("\n", file_get_contents($errorPath)), 1));
+        $params['compile'] = 1;
+        $params['status'] = $PARTIAL_SUCCESS;
+        $params['score'] = 0;
+        $this->insertOrUpdate($params);
+
+        if ($exitCode != 0) {
+            $params['compile'] = 0;
+            $params['status'] = $COMPILE_ERROR;
+            $this->insertOrUpdate($params);
+            goto SUBMIT;
+        }
+
+        // 프로그램 채점
+        $query = $this->db->prepare(
+            'SELECT `score`, `input`, `output`
+            FROM pro_task_tests WHERE `task_id` = ?
+            ORDER BY `score` ASC'
+        );
+        $query->bindValue(1, $taskId);
+        $query->execute();
+        $inputPath = tempnam(sys_get_temp_dir(), 'PRE');
+        foreach ($query->fetchAll() as $row) {
+            file_put_contents($inputPath, $row['input']);
+
+            exec(implode(' ' , [
+                escapeshellcmd($exePath),
+                '<' . escapeshellarg($inputPath),
+            ]), $output, $exitCode);
+            $params['error'] = implode("\n", $output);
+
+            if ($exitCode != 0) {
+                $params['status'] = $RUNTIME_ERROR;
+                $this->insertOrUpdate($params);
+                goto SUBMIT;
+            }
+
+            // 우측 공백 제거
+            $expectedOutput = array_map('rtrim', explode("\n", $row['output']));
+            $output = array_map('rtrim', $output);
+
+            for ($i = 0; $i < count($expectedOutput); $i++) {
+                if ($expectedOutput[$i] !== $output[$i]) {
+                    $this->insertOrUpdate($params);
+                    goto SUBMIT;
+                }
+            }
+            // 마지막 공백 줄이 포함되었으면 판단 후 패스
+            if ($i != count($output)) {
+                if ($i + 1 == count($output) && empty($output[$i])) {
+                    // noop
+                } else {
+                    $this->insertOrUpdate($params);
+                    goto SUBMIT;
+                }
+            }
+
+            $params['score'] = $row['score'];
+            $this->insertOrUpdate($params);
+        }
+
+        $params['status'] = $SUCCESS;
+        $this->insertOrUpdate($params);
+SUBMIT:
+        @unlink($inputPath);
+        @unlink($errorPath);
+        @unlink($objPath);
+        @unlink($exePath);
 
         return $response
             ->withStatus(303)
             ->withHeader('Location',
                 $this->router->pathFor('source.search') . '?task_id=' . $taskId);
+    }
+
+    private function insertOrUpdate($params)
+    {
+        $query = $this->db->prepare(
+            'INSERT INTO pro_submit (tid, uid, fid, compile, size, `status`, `error`, `score`)
+            VALUES (:id, :uid, :fid, :compile, :size, :status, :error, :score)
+            ON DUPLICATE KEY UPDATE `status` = :status, `score` = :score'
+        );
+        $query->execute($params);
     }
 
     /** GET /{source_id} */
