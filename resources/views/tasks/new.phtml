@@ -6,11 +6,6 @@
   <title>과제 - 프로</title>
   <link rel="stylesheet" href="<?=$basePath?>node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-  <style>
-    label {
-      display: block;
-    }
-  </style>
 <body>
   <nav class="navbar navbar-expand navbar-dark bg-dark">
     <div class="container">
@@ -43,22 +38,22 @@
   <div class="container">
     <form action="<?=$router->pathFor('task.store')?>" method="post">
       <div class="form-group">
-        <label>시작: <input name="start" class="form-control" type="text" placeholder="2015-04-13" pattern="\d{4}-\d{2}-\d{2}" required></label>
+        <label class="d-block">시작: <input name="start" class="form-control" type="text" placeholder="2015-04-13" pattern="\d{4}-\d{2}-\d{2}" required></label>
       </div>
       <div class="form-group">
-        <label>종료: <input name="end" class="form-control" type="text" placeholder="2015-04-13" pattern="\d{4}-\d{2}-\d{2}" required></label>
+        <label class="d-block">종료: <input name="end" class="form-control" type="text" placeholder="2015-04-13" pattern="\d{4}-\d{2}-\d{2}" required></label>
       </div>
       <div class="form-group">
-        <label class="mb-0">제목: <input name="title" class="form-control" required></label>
+        <label class="d-block mb-0">제목: <input name="title" class="form-control" required></label>
       </div>
       <div class="form-group">
-        <label class="mb-0" for="content"><span class="float-left">내용: </span><textarea name="content" class="form-control markdown-edit" rows="10"></textarea></label>
+        <label class="d-block mb-0" for="content"><span class="float-left">내용: </span><textarea name="content" class="form-control markdown-edit" rows="10"></textarea></label>
         <button class="span btn btn-block btn-secondary" type="button">늘이기</button>
       </div>
       <div class="form-row">
         <div class="col-sm">
           <div class="form-group">
-            <label>
+            <label class="d-block">
               예시 입력:
               <textarea name="in" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
             </label>
@@ -66,7 +61,7 @@
         </div>
         <div class="col-sm">
           <div class="form-group">
-            <label>
+            <label class="d-block">
               예시 출력:
               <textarea name="out" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
             </label>
@@ -105,16 +100,15 @@
         e.preventDefault();
         return;
       }
-      $('#tests').find(':first[hidden]').remove();
     });
     $('.add-test').on('click', function (e) {
       e.preventDefault();
       $('#tests').append(`
         <div class="list-group-item">
-          <button type="button" class="delete-test btn btn-secondary float-right">
+          <button type="button" class="delete-test btn btn-secondary btn-sm float-right">
             삭제
           </button>
-          <label>
+          <label class="d-block">
             최종 점수:
             <input name="test_score[]" type="number" class="form-control" required>
           </label>
@@ -122,7 +116,7 @@
           <div class="form-row">
             <div class="col-sm">
               <div class="form-group">
-                <label>
+                <label class="d-block">
                   입력:
                   <textarea name="test_input[]" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
                 </label>
@@ -130,7 +124,7 @@
             </div>
             <div class="col-sm">
               <div class="form-group">
-                <label>
+                <label class="d-block">
                   출력:
                   <textarea name="test_output[]" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
                 </label>
