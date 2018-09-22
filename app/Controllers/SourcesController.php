@@ -97,14 +97,15 @@ class SourcesController
         ]), $output, $exitCode);
 
         $params['error'] = implode("\n", array_slice(explode("\n", file_get_contents($errorPath)), 1));
-        $params['status'] = $PARTIAL_SUCCESS;
         $params['score'] = 0;
-        $this->insertOrUpdate($params);
 
         if ($exitCode != 0) {
             $params['status'] = $COMPILE_ERROR;
             goto SUBMIT;
         }
+
+        $params['status'] = $PARTIAL_SUCCESS;
+        $this->insertOrUpdate($params);
 
         // 프로그램 채점
         $query = $this->db->prepare(
@@ -139,12 +140,8 @@ class SourcesController
                 }
             }
             // 마지막 공백 줄이 포함되었으면 판단 후 패스
-            if ($i != count($output)) {
-                if ($i + 1 == count($output) && empty($output[$i])) {
-                    // noop
-                } else {
-                    goto SUBMIT;
-                }
+            if (!empty(array_filter(array_slice($output, $i), 'strlen'))) {
+                goto SUBMIT;
             }
 
             $params['score'] = $row['score'];
