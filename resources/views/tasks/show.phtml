@@ -1,13 +1,12 @@
 <?php
 
 $C_BASE = <<<EOP
-#include &lt;stdio.h&gt;
+#include <stdio.h>
 
 int main()
 {
-    return 0;
+\treturn 0;
 }
-
 EOP;
 
 ?><!DOCTYPE html>
@@ -86,7 +85,7 @@ EOP;
       'task_id' => $task['idx'],
     ])?>" method="post">
       <div class="form-group">
-        <textarea id="source" name="source" class="form-control" wrap="off" rows="10"><?=$C_BASE?></textarea>
+        <textarea id="source" name="source" class="form-control" wrap="off" rows="10"><?=htmlspecialchars($C_BASE)?></textarea>
       </div>
       <div class="form-group">
         <button type="submit" class="btn btn-primary btn-block">제출하기</button>
