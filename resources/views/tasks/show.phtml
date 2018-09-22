@@ -1,13 +1,12 @@
 <?php
 
 $C_BASE = <<<EOP
-#include &lt;stdio.h&gt;
+#include <stdio.h>
 
 int main()
 {
-    return 0;
+\treturn 0;
 }
-
 EOP;
 
 ?><!DOCTYPE html>
@@ -24,10 +23,12 @@ EOP;
     .console {
       line-height: 1.14;
       padding: .5rem;
-      overflow-x: scroll;
+      overflow-x: auto;
     }
     .CodeMirror {
-        height: auto;
+      font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size: 1rem;
+      height: auto;
     }
   </style>
 <body>
@@ -84,7 +85,7 @@ EOP;
       'task_id' => $task['idx'],
     ])?>" method="post">
       <div class="form-group">
-        <textarea id="source" name="source" class="form-control" wrap="off" rows="10" required><?=$C_BASE?></textarea>
+        <textarea id="source" name="source" class="form-control" wrap="off" rows="10"><?=htmlspecialchars($C_BASE)?></textarea>
       </div>
       <div class="form-group">
         <button type="submit" class="btn btn-primary btn-block">제출하기</button>
@@ -94,13 +95,20 @@ EOP;
 
   <script src="<?=$basePath?>node_modules/codemirror/lib/codemirror.js"></script>
   <script src="<?=$basePath?>node_modules/codemirror/mode/clike/clike.js"></script>
+  <script src="<?=$basePath?>node_modules/codemirror/addon/edit/matchbrackets.js"></script>
+  <script src="<?=$basePath?>node_modules/codemirror/addon/edit/closebrackets.js"></script>
   <script>
     var code = CodeMirror.fromTextArea(document.getElementById('source'), {
       indentUnit: 4,
-      mode: 'clike',
+      mode: 'text/x-csrc',
       lineNumbers: true,
+      viewportMargin: Infinity,
       theme: 'mdn-like',
-      lineWrapping: true,
+      matchBrackets: true,
+      autoCloseBrackets: true,
+    });
+    code.on('change', function () {
+      code.save();
     });
     // var saveTimer;
     // $('textarea').on('input propertychange', function(e) {
@@ -115,13 +123,5 @@ EOP;
     //     // $('textarea').val(localStorage['pro_submit']);
     //     code.setValue(localStorage['pro_submit']);
     // }
-    document.getElementById('submit').addEventListener('submit', function (e) {
-      code.save();
-      var sourceEl = document.getElementById('textarea');
-      sourceEl.value = sourceEl.value
-        .replace(/\u00A0/g, ' ')
-        .replace(/\t/g, '    ')
-        .replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-    });
   </script>
 </html>

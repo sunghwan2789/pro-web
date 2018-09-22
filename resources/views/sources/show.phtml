@@ -12,10 +12,12 @@
     .console {
       line-height: 1.14;
       padding: .5rem;
-      overflow-x: scroll;
+      overflow-x: auto;
     }
     .CodeMirror {
-        height: auto;
+      font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size: 1rem;
+      height: auto;
     }
   </style>
 <body>
@@ -86,13 +88,15 @@
 
   <script src="<?=$basePath?>node_modules/codemirror/lib/codemirror.js"></script>
   <script src="<?=$basePath?>node_modules/codemirror/mode/clike/clike.js"></script>
+  <script src="<?=$basePath?>node_modules/codemirror/addon/edit/matchbrackets.js"></script>
   <script>
     var code = CodeMirror.fromTextArea(document.getElementById('source'), {
       indentUnit: 4,
-      mode: 'clike',
+      mode: 'text/x-csrc',
       lineNumbers: true,
+      viewportMargin: Infinity,
       theme: 'mdn-like',
-      lineWrapping: true,
+      matchBrackets: true,
       readOnly: true,
     });
   </script>
