@@ -73,12 +73,6 @@ $app->group('/sources', function () {
     $this->post('/{source_id}/vote', App\Controllers\SourcesController::class . ':voteup');
     $this->post('/{source_id}/vote/delete', App\Controllers\SourcesController::class . ':votedown');
 });
-$app->post('/markdown/render', function ($req, $res) use ($app) {
-    $app->getContainer()->view->render($res, 'markdown/preview.phtml', [
-        'content' => $req->getParsedBodyParam('content'),
-    ]);
-    return $res;
-});
 
 
 $app->add(App\Middleware\Authenticate::class);
