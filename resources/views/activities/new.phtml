@@ -6,6 +6,7 @@
   <title>활동일지 - 프로</title>
   <link rel="stylesheet" href="<?=$basePath?>node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+  <link rel="stylesheet" href="<?=$basePath?>node_modules/easymde/dist/easymde.min.css">
   <style>
     label {
       display: block;
@@ -70,8 +71,7 @@
         <label class="mb-0">목적: <input name="purpose" class="form-control" required></label>
       </div>
       <div class="form-group">
-        <label class="mb-0" for="content"><span class="float-left">내용: </span><textarea id="content" name="content" class="form-control markdown-edit" rows="10"></textarea></label>
-        <button class="span btn btn-block btn-secondary" type="button">늘이기</button>
+        <textarea id="content" name="content" class="form-control" placeholder="내용" rows="10"></textarea>
       </div>
       <div class="form-group">
         <label>파일 첨부: <input name="attach[]" type="file" multiple></label>
@@ -83,7 +83,7 @@
   </div>
 
   <script src="<?=$basePath?>node_modules/jquery/dist/jquery.min.js"></script>
-  <script src="<?=$basePath?>_data/markdown-edit.js"></script>
+  <script src="<?=$basePath?>node_modules/easymde/dist/easymde.min.js"></script>
   <script>
     $('select').on('change', function(e) {
       e.preventDefault();
@@ -104,10 +104,12 @@
       $('option[value=' + $('input', this).val() + ']').show().removeProp('tab-index');
       $(this).remove();
     });
-    $('.span').on('click', function(e) {
-      e.preventDefault();
-      var target = $('textarea', $(this).prev());
-      target.height(target.height() + 150);
+    new EasyMDE({
+      element: document.getElementById('content'),
+      autoDownloadFontAwesome: false,
+      forceSync: true,
+      spellChecker: false,
+      status: false,
     });
     $('[name=start]').on('input propertychange', function() {
       $('[name=end]').val($(this).val());
