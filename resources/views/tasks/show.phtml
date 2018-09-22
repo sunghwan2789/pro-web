@@ -107,6 +107,9 @@ EOP;
       matchBrackets: true,
       autoCloseBrackets: true,
     });
+    code.on('change', function () {
+      code.save();
+    });
     // var saveTimer;
     // $('textarea').on('input propertychange', function(e) {
     //     clearTimeout(saveTimer);
@@ -120,13 +123,5 @@ EOP;
     //     // $('textarea').val(localStorage['pro_submit']);
     //     code.setValue(localStorage['pro_submit']);
     // }
-    document.getElementById('submit').addEventListener('submit', function (e) {
-      code.save();
-      var sourceEl = document.getElementById('textarea');
-      sourceEl.value = sourceEl.value
-        .replace(/\u00A0/g, ' ')
-        .replace(/\t/g, '    ')
-        .replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-    });
   </script>
 </html>
