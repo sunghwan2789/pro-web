@@ -31,7 +31,11 @@ class Authenticate
         if ($this->isAuthenticated($request)) {
             // 로그인 유저가 로그인 시도하면 차단
             if ($this->isAuthenticating($request)) {
-                throw new \Exception('already logged in');
+                // throw new \Exception('already logged in');
+                return $response
+                    ->withStatus(303)
+                    ->withHeader('Location',
+                        $request->getQueryParams()['return']);
             }
             return $next($request, $response);
         }
