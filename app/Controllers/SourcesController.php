@@ -240,16 +240,13 @@ SUBMIT:
      * 쿼리 문자열 목록:
      * * task_id: 과제로 필터
      * * user_id: 학번으로 필터
-     * * is_compiled: 컴파일 가능 여부로 필터
-     * * review_status: 관리자 확인 여부로 필터
+     * * after:   페이징 기준 source_id
      */
-    // TODO: review_status 추가하기
     public function search(Request $request, Response $response)
     {
         $taskId = $request->getQueryParam('task_id');
         $userId = $request->getQueryParam('user_id');
-        $isCompiled = $request->getQueryParam('is_compiled');
-        $reviewStatus = $request->getQueryParam('review_status');
+        $after = $request->getQueryParam('after');
 
         $sql = 'SELECT submit.source_id, submit.uid, submit.fid, submit.status, submit.size, submit.date,
             member.gen, member.name, submit.tid, task.title, submit.score, submit.error
@@ -266,17 +263,25 @@ SUBMIT:
             $conds[] = 'submit.uid = ?';
             $params[] = $userId;
         }
+        if (!is_null($after)) {
+            $conds[] = 'submit.source_id < ?';
+            $params[] = $after;
+        }
         if (count($conds)) {
             $sql .= ' WHERE ' . \implode(' AND ', $conds);
         }
-        $sql .= ' ORDER BY submit.source_id DESC';
+        $sql .= ' ORDER BY submit.source_id DESC
+            LIMIT 120';
 
         $query = $this->db->prepare($sql);
         $query->execute($params);
         $sources = $query->fetchAll();
 
+        $next = $request->getQueryParams();
+        $next['after'] = end($sources)['source_id'];
         $this->view->render($response, 'sources/search.phtml', [
             'sources' => $sources,
+            'nextUrl' => $request->getUri()->withQuery(http_build_query($next)),
         ]);
         return $response;
     }
