@@ -124,6 +124,8 @@ class SourcesController
                 escapeshellcmd($exePath),
                 '<' . escapeshellarg($inputPath),
             ]), $output, $exitCode);
+            // 출력이 없는 프로그램에서 실패하는 문제 해결
+            $output[] = '';
 
             if ($exitCode != 0) {
                 $params['status'] = $RUNTIME_ERROR;
