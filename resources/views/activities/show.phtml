@@ -40,7 +40,11 @@
       <i class="fas fa-calendar-alt" title="활동 시간"></i> <time><?=date('Y-m-d H:i', $start)?></time> ~ <?=date((date('d', $start) != date('d', $end) ? 'Y-m-d ' : '') . 'H:i', $end)?>
     </div>
 
-    <div class="mb-3" style="text-align: justify"><?=(new Parsedown())->text($activity['content'])?></div>
+    <div class="mb-3" style="text-align: justify"><?php
+      $parser = new Parsedown();
+      $parser->setBreaksEnabled(true);
+      echo $parser->text($activity['content']);
+    ?></div>
 
     <h5>첨부 파일</h5>
     <ul>

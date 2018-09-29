@@ -67,7 +67,11 @@ EOP;
       <i class="fas fa-calendar-check" title="마감일"></i> <?=$task['end']?>
     </div>
 
-    <div class="mb-3" style="text-align: justify"><?=(new Parsedown())->text($task['content'])?></div>
+    <div class="mb-3" style="text-align: justify"><?php
+      $parser = new Parsedown();
+      $parser->setBreaksEnabled(true);
+      echo $parser->text($task['content']);
+    ?></div>
 
     <aside class="row">
       <div class="col-sm">
