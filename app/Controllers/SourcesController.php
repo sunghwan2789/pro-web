@@ -183,7 +183,7 @@ SUBMIT:
 
         $query = $this->db->prepare(
             'SELECT s.source_id, s.uid, s.tid, s.fid, s.size, s.date,
-            m.gen, m.name, t.title, s.status, s.score, s.error
+            m.gen, m.name, t.title, s.status, s.score, s.error, t.end
             FROM pro_submit s
             LEFT JOIN pro_members m ON (m.id = s.uid)
             LEFT JOIN pro_tasks t ON (t.idx = s.tid)
@@ -195,6 +195,20 @@ SUBMIT:
 
         if ($source === false) {
             throw new \Exception('not found');
+        }
+
+        $query = $this->db->prepare('SELECT authority FROM pro_members WHERE id = ?');
+        $query->bindValue(1, $_SESSION['uid']);
+        $query->execute();
+        $authority = $query->fetchColumn();
+
+        // 마감 전 과제 소스코드 열람 제한
+        if (
+            strtotime('today') <= strtotime($source['end'])
+            && $source['uid'] !== $_SESSION['uid']
+            && $authority > 0
+        ) {
+            throw new \Exception('마감 전 과제의 소스코드 열람을 제한합니다!');
         }
 
         $stream = $this->getSourceStream($source);
