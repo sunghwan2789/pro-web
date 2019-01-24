@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using pro_web.Middleware;
 
 namespace pro_web
 {
@@ -52,6 +53,8 @@ namespace pro_web
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<BasePathMiddleware>();
 
             app.UseMvc();
         }
