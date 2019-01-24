@@ -36,7 +36,8 @@ namespace pro_web
             StartupConfigureServices(services);
 
             services.AddDbContext<ProContext>(options =>
-                options.UseMySql(configuration.GetConnectionString("DefaultConnection")));
+                options.UseLazyLoadingProxies()
+                    .UseMySql(configuration.GetConnectionString("DefaultConnection")));
         }
 
         private void StartupConfigureServices(IServiceCollection services)
