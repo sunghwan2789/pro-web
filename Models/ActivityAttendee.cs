@@ -7,7 +7,6 @@ namespace pro_web.Models
 {
     public partial class ActivityAttendee
     {
-        public uint Id { get; set; }
         public uint ActivityId { get; set; }
         public uint AttandeeId { get; set; }
 

@@ -65,22 +65,15 @@ namespace pro_web
 
             modelBuilder.Entity<ActivityAttendee>(entity =>
             {
-                entity.HasKey(e => e.Id)
-                    .HasName("PRIMARY");
+                entity.HasKey(e => new { e.ActivityId, e.AttandeeId });
 
                 entity.ToTable("pro_activity_attend");
-
-                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.HasIndex(e => e.ActivityId)
                     .HasName("aid");
 
                 entity.HasIndex(e => e.AttandeeId)
                     .HasName("uid");
-
-                entity.HasIndex(e => new { e.ActivityId, e.AttandeeId })
-                    .HasName("aid_2")
-                    .IsUnique();
 
                 entity.Property(e => e.ActivityId).HasColumnName("aid");
 
