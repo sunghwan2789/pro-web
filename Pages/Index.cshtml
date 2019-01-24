@@ -1,0 +1,18 @@
+﻿@page
+@model IndexModel
+@{
+
+}
+<p>
+    @Html.Raw(string.Join("<br>", Model.Activities.Select(i => i.Summary)))
+</p>
+<p>
+    @Html.Raw(string.Join("<br>", Model.Members.Select(i => i.StudentNumber)))
+</p>
+@foreach (var activity in Model.Activities)
+{
+    <p>
+        @activity.Summary <br>
+        @Html.Raw(string.Join("<br>", activity.ActivityAttendees.Select(i => i.Attendee.StudentNumber)))
+    </p>
+}
