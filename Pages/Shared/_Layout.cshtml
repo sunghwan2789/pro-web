@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>프로</title>
+    <link rel="stylesheet" href="~/node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <div class="container">
+            <span class="navbar-brand">프로</span>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="<?=$router->pathFor('activity.list')?>">활동일지</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?=$router->pathFor('task.index')?>">과제</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?=$router->pathFor('source.search')?>">소스코드</a>
+                </li>
+            </ul>
+            <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
+                <button type="submit" class="btn btn-link text-muted" title="로그아웃"><i class="fas fa-sign-out-alt"></i></button>
+            </form>
+        </div>
+    </nav>
+@RenderBody()
+</body>
+</html>

@@ -54,6 +54,8 @@ namespace pro_web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.UseMiddleware<BasePathMiddleware>();
 
             app.UseMvc();
