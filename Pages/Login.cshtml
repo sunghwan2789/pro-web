@@ -89,19 +89,17 @@
 </head>
 <body>
     <img src="~/logo-pro-2.png" alt="프로 로고">
-    @if (Model.Registered)
+    @if (ViewData.ContainsKey("Message"))
     {
-    <aside>
-        <button>&#10005;</button>
-        <p>계정 설정을 완료했습니다.
-        <p>다시 로그인하세요.
-    </aside>
+        <aside>
+            <button>&#10005;</button>
+            @Html.Raw(ViewData["Message"])
+        </aside>
     }
     <form method="POST">
-        <input asp-for="ReturnUrl" type="hidden" value="@Model.ReturnUrl">
-        <input asp-for="StudentNumber" type="text" placeholder="아이디">
-        <input asp-for="Password" type="password" placeholder="비밀번호">
-        <label><input asp-for="Persist" type="checkbox"> 로그인 상태 유지</label>
+        <input asp-for="StudentNumber" placeholder="아이디">
+        <input asp-for="Password" placeholder="비밀번호">
+        <label><input asp-for="Persist"> 로그인 상태 유지</label>
         <button type="submit">로그인</button>
     </form>
     <script>
