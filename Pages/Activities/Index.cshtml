@@ -1,0 +1,92 @@
+﻿@page "{ActivityId?}"
+@using Markdig
+@using Markdig.Extensions
+@model pro_web.Pages.Activities.IndexModel
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>활동일지 - 프로</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/lib/@@fortawesome/fontawesome-free/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <div class="container">
+            <a asp-page="/Index" class="navbar-brand">활동일지</a>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a asp-page="" class="nav-link">
+                        아카이브
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-page="" class="nav-link">
+                        작성
+                    </a>
+                </li>
+            </ul>
+            <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
+                <button type="submit" class="btn btn-link text-muted" title="로그아웃"><i class="fas fa-sign-out-alt"></i></button>
+            </form>
+        </div>
+    </nav>
+    <div class="container">
+        <h2 class="mb-1">
+            @Model.Activity.Summary
+        </h2>
+        <div class="mb-3">
+            <i class="fas fa-users" title="참여 회원 수"></i>
+            @(Model.Activity.ActivityAttendees.Count)명
+
+            <i class="fas fa-location-arrow" title="활동 장소"></i>
+            @Model.Activity.Place
+
+            <i class="fas fa-calendar-alt" title="활동 시간"></i>
+            <time>@Model.Activity.StartAt.ToString("yyyy-MM-dd HH:mm")</time>
+            @if (Model.Activity.StartAt != Model.Activity.EndAt)
+            {
+                if (Model.Activity.StartAt.Date != Model.Activity.EndAt.Date)
+                {
+                    @:~ @Model.Activity.EndAt.ToString("yyyy-MM-dd HH:mm")
+                }
+                else
+                {
+                    @:~ @Model.Activity.EndAt.ToString("HH:mm")
+                }
+            }
+        </div>
+
+        <div class="mb-3" style="text-align: justify">
+            @Html.Raw(Markdown.ToHtml(
+                Model.Activity.Content,
+                new Markdig.MarkdownPipelineBuilder()
+                    .UseAdvancedExtensions()
+                    .UseBootstrap()
+                    .UseSoftlineBreakAsHardlineBreak()
+                    .Build()))
+        </div>
+        <h5>첨부 파일</h5>
+        <ul>
+            @foreach (var attachment in Model.Activity.Attachments)
+            {
+                <li>
+                    <a asp-page="" asp-route-file-id="@attachment.Id">
+                        @attachment.OriginalFilename
+                    </a>
+                </li>
+            }
+        </ul>
+        <h5>참여 회원</h5>
+        <ul>
+            @foreach (var attendee in Model.Activity.ActivityAttendees.Select(i => i.Attendee))
+            {
+                <li>
+                    @(attendee.Gen)기 @attendee.Name
+                </li>
+            }
+        </ul>
+    </div>
+</body>
+</html>
