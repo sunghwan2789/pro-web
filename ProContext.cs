@@ -49,7 +49,7 @@ namespace pro_web
                 entity.Property(e => e.Filename)
                     .IsRequired()
                     .HasColumnName("md5")
-                    .HasColumnType("char(32)");
+                    .HasColumnType("tinytext");
 
                 entity.Property(e => e.OriginalFilename)
                     .IsRequired()

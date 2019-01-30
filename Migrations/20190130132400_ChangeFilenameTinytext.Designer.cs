@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using pro_web;
 
 namespace pro_web.Migrations
 {
     [DbContext(typeof(ProContext))]
-    partial class ProContextModelSnapshot : ModelSnapshot
+    [Migration("20190130132400_ChangeFilenameTinytext")]
+    partial class ChangeFilenameTinytext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
