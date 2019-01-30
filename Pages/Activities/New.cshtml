@@ -79,7 +79,7 @@
                 <textarea asp-for="Activity.Content" id="content" class="form-control" placeholder="내용" rows="10"></textarea>
             </div>
             <div class="form-group">
-                <label>파일 첨부: <input name="attach[]" type="file" multiple></label>
+                <label>파일 첨부: <input asp-for="Attachments"></label>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary btn-block">저장하기</button>
