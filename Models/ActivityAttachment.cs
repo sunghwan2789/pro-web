@@ -11,6 +11,8 @@ namespace pro_web.Models
         public uint ActivityId { get; set; }
         public string Filename { get; set; }
         public string OriginalFilename { get; set; }
+        public string MediaType { get; set; }
+        public long Size { get; set; }
 
         public virtual Activity Activity { get; set; }
     }
