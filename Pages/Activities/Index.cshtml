@@ -72,7 +72,7 @@
             @foreach (var attachment in Model.Activity.Attachments)
             {
                 <li>
-                    <a asp-page="" asp-route-file-id="@attachment.Id">
+                    <a asp-page="/Files/Download" asp-route-fileId="@attachment.Id">
                         @attachment.OriginalFilename
                     </a>
                 </li>
