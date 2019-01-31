@@ -8,8 +8,8 @@ namespace pro_web.Models
         public uint Id { get; set; }
         public uint TaskId { get; set; }
         public uint Score { get; set; }
-        public byte[] Input { get; set; }
-        public byte[] Output { get; set; }
+        public string Input { get; set; }
+        public string Output { get; set; }
 
         public virtual Task Task { get; set; }
     }
