@@ -23,5 +23,47 @@ namespace pro_web.Pages.Tasks
         {
             // TODO: 권한 확인
         }
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            // TODO: 권한 확인
+
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            var task = new Models.Task();
+            if (!await TryUpdateModelAsync(
+                task,
+                "Task",
+                i => i.StartAt,
+                i => i.EndAt,
+                i => i.Title,
+                i => i.Content,
+                i => i.ExampleInput,
+                i => i.ExampleOutput))
+            {
+                return Page();
+            }
+
+            for (var i = 0; i < Request.Form["test_score[]"].Count; i++)
+            {
+                task.Tests.Add(new Models.TaskTest
+                {
+                    Score = uint.Parse(Request.Form["test_score[]"][i]),
+                    Input = Request.Form["test_input[]"][i],
+                    Output = Request.Form["test_output[]"][i],
+                });
+            }
+
+            await db.Tasks.AddAsync(task);
+            await db.SaveChangesAsync();
+
+            return RedirectToPage("./Read", new
+            {
+                TaskId = task.Id,
+            });
+        }
     }
 }
