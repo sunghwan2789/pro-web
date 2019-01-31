@@ -1,0 +1,143 @@
+﻿@page "{TaskId}"
+@model pro_web.Pages.Tasks.ReadModel
+@using Markdig
+@{
+    var C_BASE = "#include <stdio.h>\n\nint main()\n{\n\treturn 0;\n}";
+}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>과제 - 프로</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/lib/@@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="~/lib/codemirror/theme/mdn-like.css">
+    <style>
+        .console {
+            line-height: 1.14;
+            padding: .5rem;
+            overflow-x: auto;
+        }
+        .CodeMirror {
+            font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+            font-size: 1rem;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <div class="container">
+            <a asp-page="/Index" class="navbar-brand">과제</a>
+            <ul class="navbar-nav mr-auto">
+                @if (Model.OnGoing)
+                {
+                    <li class="nav-item active">
+                        <a asp-page="./Index" class="nav-link">
+                            진행 중
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-page="./Archive" class="nav-link">
+                            아카이브
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a asp-page="./Index" class="nav-link">
+                            진행 중
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a asp-page="./Archive" class="nav-link">
+                            아카이브
+                        </a>
+                    </li>
+                }
+                <li class="nav-item">
+                    <a asp-page="./New" class="nav-link">
+                        게시
+                    </a>
+                </li>
+            </ul>
+            <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
+                <button type="submit" class="btn btn-link text-muted" title="로그아웃"><i class="fas fa-sign-out-alt"></i></button>
+            </form>
+        </div>
+    </nav>
+    <div class="container">
+        <h2 class="mb-1">@Model.Task.Title</h2>
+        <div class="mb-3">
+            <i class="fas fa-calendar-alt" title="게시일"></i>
+            <time>@Model.Task.StartAt.ToString("yyyy-MM-dd")</time>
+
+            <i class="fas fa-calendar-check" title="마감일"></i>
+            @Model.Task.EndAt.ToString("yyyy-MM-dd")
+        </div>
+        <div class="mb-3" style="text-align: justify">
+            @Html.Raw(Markdown.ToHtml(
+                Model.Task.Content,
+                new MarkdownPipelineBuilder()
+                    .UseAdvancedExtensions()
+                    .UseBootstrap()
+                    .UseSoftlineBreakAsHardlineBreak()
+                    .Build()))
+        </div>
+        <aside class="row">
+            <div class="col-sm">
+                <h4>예시 입력</h4>
+                <pre class="console text-light bg-dark">@Model.Task.ExampleInput</pre>
+            </div>
+            <div class="col-sm">
+                <h4>예시 출력</h4>
+                <pre class="console text-light bg-dark">@Model.Task.ExampleOutput</pre>
+            </div>
+        </aside>
+        <h2>코드</h2>
+        <form asp-page="/Sources/New" asp-route-taskId="@Model.Task.Id" id="submit" method="post">
+            <div class="form-group">
+                <textarea id="source" name="source" class="form-control" wrap="off" rows="10">@C_BASE</textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">제출하기</button>
+            </div>
+        </form>
+    </div>
+    <script src="~/lib/codemirror/lib/codemirror.js"></script>
+    <script src="~/lib/codemirror/mode/clike/clike.js"></script>
+    <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="~/lib/codemirror/addon/edit/closebrackets.js"></script>
+    <script>
+        var code = CodeMirror.fromTextArea(document.getElementById('source'), {
+            indentUnit: 4,
+            mode: 'text/x-csrc',
+            lineNumbers: true,
+            viewportMargin: Infinity,
+            theme: 'mdn-like',
+            matchBrackets: true,
+            autoCloseBrackets: true,
+            indentWithTabs: true,
+        });
+        code.on('change', function () {
+            code.save();
+        });
+        // var saveTimer;
+        // $('textarea').on('input propertychange', function(e) {
+        //     clearTimeout(saveTimer);
+        //     saveTimer = setTimeout(function() {
+        //             // localStorage['pro_submit'] = $('textarea').val();
+        //             localStorage['pro_submit'] = code.getValue();
+        //         }, 1000);
+        // });
+        // if (localStorage['pro_submit'])
+        // {
+        //     // $('textarea').val(localStorage['pro_submit']);
+        //     code.setValue(localStorage['pro_submit']);
+        // }
+    </script>
+</body>
+</html>
