@@ -24,7 +24,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?=$router->pathFor('source.search')?>">소스코드</a>
+                    <a asp-page="/Submissions/Index" class="nav-link">
+                        소스코드
+                    </a>
                 </li>
             </ul>
             <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
