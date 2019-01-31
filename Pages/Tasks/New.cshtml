@@ -1,0 +1,143 @@
+﻿@page
+@model pro_web.Pages.Tasks.NewModel
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>과제 - 프로</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/lib/@@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="~/lib/easymde/dist/easymde.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <div class="container">
+            <a asp-page="/Index" class="navbar-brand">과제</a>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a asp-page="./Index" class="nav-link">
+                        진행 중
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a asp-page="./Archive" class="nav-link">
+                        아카이브
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a asp-page="./New" class="nav-link">
+                        작성
+                    </a>
+                </li>
+            </ul>
+            <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
+                <button type="submit" class="btn btn-link text-muted" title="로그아웃"><i class="fas fa-sign-out-alt"></i></button>
+            </form>
+        </div>
+    </nav>
+    <div class="container">
+        <form method="post">
+            <div class="form-group">
+                <label class="d-block">시작: <input asp-for="Task.StartAt" type="text" id="start" class="form-control" placeholder="2015-04-13" pattern="\d{4}-\d{2}-\d{2}" required></label>
+            </div>
+            <div class="form-group">
+                <label class="d-block">종료: <input asp-for="Task.EndAt" type="text" id="end" class="form-control" placeholder="2015-04-13" pattern="\d{4}-\d{2}-\d{2}" required></label>
+            </div>
+            <div class="form-group">
+                <label class="d-block mb-0">제목: <input asp-for="Task.Title" class="form-control" required></label>
+            </div>
+            <div class="form-group">
+                <textarea asp-for="Task.Content" id="content" class="form-control" placeholder="내용" rows="10"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="col-sm">
+                    <div class="form-group">
+                        <label class="d-block">
+                            예시 입력:
+                            <textarea asp-for="Task.ExampleInput" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="form-group">
+                        <label class="d-block">
+                            예시 출력:
+                            <textarea asp-for="Task.ExampleOutput" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="add-test btn btn-secondary float-right">
+                추가
+            </button>
+            <h2>
+                채점 데이터
+            </h2>
+            <div id="tests" class="list-group list-group-flush">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block">저장하기</button>
+            </div>
+        </form>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/easymde/dist/easymde.min.js"></script>
+    <script>
+        new EasyMDE({
+            element: document.getElementById('content'),
+            autoDownloadFontAwesome: false,
+            forceSync: true,
+            spellChecker: false,
+            status: false,
+        });
+        $('#start').on('input propertychange', function () {
+            $('#end').val($(this).val());
+        });
+        $('form').on('submit', function (e) {
+            if (!confirm('활동 정보를 제대로 입력했나요?')) {
+                e.preventDefault();
+                return;
+            }
+        });
+        $('.add-test').on('click', function (e) {
+            e.preventDefault();
+            $('#tests').append(`
+                <div class="list-group-item">
+                    <button type="button" class="delete-test btn btn-secondary btn-sm float-right">
+                        삭제
+                    </button>
+                    <label class="d-block">
+                        최종 점수:
+                        <input name="test_score[]" type="number" class="form-control" required>
+                    </label>
+
+                    <div class="form-row">
+                        <div class="col-sm">
+                            <div class="form-group">
+                                <label class="d-block">
+                                    입력:
+                                    <textarea name="test_input[]" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm">
+                            <div class="form-group">
+                                <label class="d-block">
+                                    출력:
+                                    <textarea name="test_output[]" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+        });
+        $(document).on('click', '.delete-test', function (e) {
+            e.preventDefault();
+            $(this).parent().remove();
+        });
+    </script>
+</body>
+</html>
