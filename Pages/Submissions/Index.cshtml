@@ -25,6 +25,25 @@
             </form>
         </div>
     </nav>
+    @if (Model.TaskId != null)
+    {
+        <div class="container mt-1 mb-3">
+            <nav class="nav nav-pills nav-justify">
+                <a asp-page="/Tasks/Read" asp-route-taskId="@Model.TaskId"
+                   class="nav-item nav-link">
+                    문제
+                </a>
+                <a asp-page="/Submissions/New" asp-route-taskId="@Model.TaskId"
+                   class="nav-item nav-link">
+                    제출
+                </a>
+                <a asp-page="/Submissions/Index" asp-route-taskId="@Model.TaskId"
+                   class="nav-item nav-link active">
+                    채점 현황
+                </a>
+            </nav>
+        </div>
+    }
     <div class="container">
         <div class="table-responsive">
             <table class="table" style="white-space: nowrap">
