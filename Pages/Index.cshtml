@@ -19,7 +19,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<?=$router->pathFor('task.index')?>">과제</a>
+                    <a asp-page="/Tasks/Index" class="nav-link">
+                        과제
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?=$router->pathFor('source.search')?>">소스코드</a>
