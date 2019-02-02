@@ -22,6 +22,7 @@ namespace pro_web.Models
         public StatusCode Status { get; set; }
         public int Score { get; set; }
         public string Error { get; set; }
+        public bool Working { get; set; }
 
         public virtual Task Task { get; set; }
         public virtual Member Author { get; set; }

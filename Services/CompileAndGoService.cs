@@ -187,6 +187,8 @@ namespace pro_web.Services
                     workItem.Status = TaskSource.StatusCode.Success;
 
                 SUBMIT:
+                    // 채점 완료
+                    workItem.Working = false;
                     await db.SaveChangesAsync();
                 }
 
