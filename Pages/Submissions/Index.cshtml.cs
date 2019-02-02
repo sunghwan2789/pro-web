@@ -41,7 +41,7 @@ namespace pro_web.Pages.Submissions
             {
                 query = query.Where(i => i.Id < After);
             }
-            Submissions = query.OrderByDescending(i => i.Id).Take(120).ToList();
+            Submissions = query.OrderByDescending(i => i.Id).Take(25).ToList();
             ViewData["after"] = Submissions.LastOrDefault()?.Id;
         }
     }

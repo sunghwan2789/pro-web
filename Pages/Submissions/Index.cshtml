@@ -57,7 +57,7 @@
                         <th>제출한 시간</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="autopagerize_page_element">
                     @foreach (var submission in Model.Submissions)
                     {
                         <tr>
@@ -123,9 +123,9 @@
             <ul class="pagination justify-content-end">
                 <li class="page-item">
                     <a asp-route-taskId="@(Model.TaskId)"
-                       asp-route-userId="@(Model.UserId)"
-                       asp-route-after="@ViewData["after"]"
-                       class="page-link">
+                        asp-route-userId="@(Model.UserId)"
+                        asp-route-after="@ViewData["after"]"
+                        class="page-link" rel="next">
                         다음 페이지
                     </a>
                 </li>
