@@ -7,7 +7,7 @@ namespace pro_web.Models
     {
         public enum StatusCode
         {
-            Success = 0,
+            SuccessOrInitialization = 0,
             CompilationError = 1,
             RuntimeError = 2,
             PartialSuccess = 3,

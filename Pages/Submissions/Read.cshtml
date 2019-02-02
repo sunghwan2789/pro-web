@@ -71,20 +71,35 @@
                                 </a>
                             </small>
                         </td>
-                        @switch (Model.Submission.Status)
+                        @if (Model.Submission.Working)
                         {
-                            case Models.TaskSource.StatusCode.Success:
-                                <td>정답</td>
-                                break;
-                            case Models.TaskSource.StatusCode.CompilationError:
-                                <td>컴파일 에러</td>
-                                break;
-                            case Models.TaskSource.StatusCode.RuntimeError:
-                                <td>런타임 에러</td>
-                                break;
-                            case Models.TaskSource.StatusCode.PartialSuccess:
-                                <td>@(Model.Submission.Score)점</td>
-                                break;
+                            @switch (Model.Submission.Status)
+                            {
+                                case Models.TaskSource.StatusCode.SuccessOrInitialization:
+                                    <td class="text-muted">채점 준비 중</td>
+                                    break;
+                                case Models.TaskSource.StatusCode.PartialSuccess:
+                                    <td class="text-warning">@(Model.Submission.Score)점 (채점 중)</td>
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            @switch (Model.Submission.Status)
+                            {
+                                case Models.TaskSource.StatusCode.SuccessOrInitialization:
+                                    <td class="text-success">정답</td>
+                                    break;
+                                case Models.TaskSource.StatusCode.CompilationError:
+                                    <td class="text-info">컴파일 에러</td>
+                                    break;
+                                case Models.TaskSource.StatusCode.RuntimeError:
+                                    <td class="text-info">런타임 에러</td>
+                                    break;
+                                case Models.TaskSource.StatusCode.PartialSuccess:
+                                    <td class="text-danger">@(Model.Submission.Score)점</td>
+                                    break;
+                            }
                         }
                         <td>
                             <a asp-page="./Read" asp-route-submissionId="@(Model.Submission.Id)">

@@ -187,7 +187,7 @@ namespace pro_web.Services
                     }
 
                     // 모든 테스트를 통과한 정답
-                    workItem.Status = TaskSource.StatusCode.Success;
+                    workItem.Status = TaskSource.StatusCode.SuccessOrInitialization;
 
                 SUBMIT:
                     // 채점 완료
