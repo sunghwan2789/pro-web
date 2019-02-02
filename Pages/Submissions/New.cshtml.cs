@@ -81,7 +81,7 @@ namespace pro_web.Pages.Submissions
             queue.QueueBackgroundWorkItem(submission);
             return RedirectToPage("/Submissions/Index", new
             {
-                TaskId,
+                taskId = TaskId,
             });
         }
     }
