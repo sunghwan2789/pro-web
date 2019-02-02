@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,7 +59,7 @@ namespace pro_web.Services
 
         public string GetCompileCommand(TaskSource submission)
         {
-            return $"cl /nologo /O2 /TC /Za {GetMountFilename(submission)}";
+            return $"cl /nologo /O2 /TC /Za /utf-8 {GetMountFilename(submission)}";
         }
 
         public string GetExecuteCommand(TaskSource submission)
@@ -97,6 +98,7 @@ namespace pro_web.Services
                         UseShellExecute = false,
                         CreateNoWindow = true,
                         RedirectStandardOutput = true,
+                        StandardOutputEncoding = Encoding.UTF8,
                     }))
                     {
                         await p.StandardOutput.ReadLineAsync();
@@ -133,6 +135,7 @@ namespace pro_web.Services
                             UseShellExecute = false,
                             CreateNoWindow = true,
                             RedirectStandardOutput = true,
+                            StandardOutputEncoding = Encoding.UTF8,
                         }))
                         {
                             var timeLimitTask = System.Threading.Tasks.Task.Delay(30_000);
