@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using pro_web.Middleware;
+using pro_web.Services;
 
 namespace pro_web
 {
@@ -45,6 +46,8 @@ namespace pro_web
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddRouting(options => options.LowercaseUrls = true);
+            services.AddHostedService<CompileAndGoService>();
+            services.AddSingleton<ICompileAndGoQueue, CompileAndGoQueue>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
