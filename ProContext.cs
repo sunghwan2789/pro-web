@@ -263,8 +263,7 @@ namespace pro_web
                 entity.Property(e => e.Size).HasColumnName("size");
 
                 entity.Property(e => e.Status)
-                    .HasColumnName("status")
-                    .HasColumnType("int(11)");
+                    .HasColumnName("status");
 
                 entity.Property(e => e.TaskId).HasColumnName("tid");
 

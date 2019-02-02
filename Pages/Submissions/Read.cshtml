@@ -73,16 +73,16 @@
                         </td>
                         @switch (Model.Submission.Status)
                         {
-                            case 0:
+                            case Models.TaskSource.StatusCode.Success:
                                 <td>정답</td>
                                 break;
-                            case 1:
+                            case Models.TaskSource.StatusCode.CompilationError:
                                 <td>컴파일 에러</td>
                                 break;
-                            case 2:
+                            case Models.TaskSource.StatusCode.RuntimeError:
                                 <td>런타임 에러</td>
                                 break;
-                            default:
+                            case Models.TaskSource.StatusCode.PartialSuccess:
                                 <td>@(Model.Submission.Score)점</td>
                                 break;
                         }
