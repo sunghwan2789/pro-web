@@ -86,7 +86,8 @@ namespace pro_web.Pages
             });
             await db.SaveChangesAsync();
 
-            // TODO: 비밀번호 설정
+            member.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(Password, 12);
+            await db.SaveChangesAsync();
 
             return RedirectToPage("./Login", new
             {

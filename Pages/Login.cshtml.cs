@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -69,7 +71,22 @@ namespace pro_web.Pages
                 });
             }
 
-            // TODO: 비밀번호 검사
+            // 비밀번호가 맞는지 검사
+            if (!BCrypt.Net.BCrypt.EnhancedVerify(Password, member.Password))
+            {
+                if (!LegacyPasswordVerify(Password, member.Password))
+                {
+                    ViewData["Message"] = @"
+                        <p>비밀번호가 틀렸습니다.
+                        <p>비밀번호를 잊었다면 관리자에게 문의하세요.";
+                    return Page();
+                }
+            }
+            if (BCrypt.Net.BCrypt.PasswordNeedsRehash(member.Password, 12))
+            {
+                member.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(Password, 12);
+                await db.SaveChangesAsync();
+            }
 
             await db.MemberLogs.AddAsync(new Models.MemberLog
             {
@@ -81,6 +98,14 @@ namespace pro_web.Pages
             // TODO: 세션 만들기
 
             return Redirect(ReturnUrl ?? $"{Request.PathBase}/");
+        }
+
+        private bool LegacyPasswordVerify(string text, string hash)
+        {
+            string sha1(string s) => string.Join("", SHA1.Create().ComputeHash(Encoding.ASCII.GetBytes(s)).Select(i => i.ToString("x2")));
+            const string legacySalt = "y#.fij/|lP&!79.Txcf]";
+            var p = sha1(legacySalt + sha1(text + legacySalt) + text);
+            return BCrypt.Net.BCrypt.Verify(p, hash);
         }
     }
 }
