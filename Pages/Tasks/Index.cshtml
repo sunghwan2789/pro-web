@@ -3,53 +3,53 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>과제 - 프로</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="~/lib/@@fortawesome/fontawesome-free/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>과제 - 프로</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="~/lib/@@fortawesome/fontawesome-free/css/all.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-        <div class="container">
-            <a asp-page="/Index" class="navbar-brand">과제</a>
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a asp-page="./Index" class="nav-link">
-                        진행 중
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a asp-page="./Archive" class="nav-link">
-                        아카이브
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a asp-page="./New" class="nav-link">
-                        게시
-                    </a>
-                </li>
-            </ul>
-            <partial name="_LogoutPartial" />
-        </div>
-    </nav>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
     <div class="container">
-        <div class="list-group">
-            @foreach (var task in Model.Tasks)
-            {
-                <a class="list-group-item list-group-item-action"
-                   asp-page="./Read" asp-route-taskId="@task.Id">
-                    <h5 class="mb-1">@task.Title</h5>
-                    <div class="mb-0">
-                        <i class="fas fa-calendar-alt" title="게시일"></i>
-                        @task.StartAt.ToString("yyyy-MM-dd")
-
-                        <i class="fas fa-calendar-check" title="마감일"></i>
-                        @task.EndAt.ToString("yyyy-MM-dd")
-                    </div>
-                </a>
-            }
-        </div>
+      <a asp-page="/Index" class="navbar-brand">과제</a>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a asp-page="./Index" class="nav-link">
+            진행 중
+          </a>
+        </li>
+        <li class="nav-item">
+          <a asp-page="./Archive" class="nav-link">
+            아카이브
+          </a>
+        </li>
+        <li class="nav-item">
+          <a asp-page="./New" class="nav-link">
+            게시
+          </a>
+        </li>
+      </ul>
+      <partial name="_LogoutPartial" />
     </div>
+  </nav>
+  <div class="container">
+    <div class="list-group">
+      @foreach (var task in Model.Tasks)
+      {
+        <a class="list-group-item list-group-item-action"
+           asp-page="./Read" asp-route-taskId="@task.Id">
+          <h5 class="mb-1">@task.Title</h5>
+          <div class="mb-0">
+            <i class="fas fa-calendar-alt" title="게시일"></i>
+            @task.StartAt.ToString("yyyy-MM-dd")
+
+            <i class="fas fa-calendar-check" title="마감일"></i>
+            @task.EndAt.ToString("yyyy-MM-dd")
+          </div>
+        </a>
+      }
+    </div>
+  </div>
 </body>
 </html>

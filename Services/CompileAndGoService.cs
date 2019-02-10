@@ -40,7 +40,7 @@ namespace pro_web.Services
         }
 
         public string MountDrive => "S:";
-        
+
         public string GetSourcePath(TaskSource submission)
         {
             var filename = $"{submission.TaskId}_{submission.AuthorId}_{submission.Sequence}.c";

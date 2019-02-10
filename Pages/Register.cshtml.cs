@@ -73,7 +73,8 @@ namespace pro_web.Pages
                 || member.Password != null
                 || member.Name != Name
                 || member.PhoneNumber != uint.Parse(Regex.Replace(PhoneNumber, "[^0-9]", ""))
-            ) {
+            )
+            {
                 ViewData["Message"] = $@"
                        <p>본인 확인을 실패하였거나 비밀번호가 이미 설정되어 있습니다.";
                 return Page();
