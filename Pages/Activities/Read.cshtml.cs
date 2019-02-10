@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace pro_web.Pages.Activities
 {
-    public class IndexModel : PageModel
+    public class ReadModel : PageModel
     {
-        public IndexModel(ProContext db)
+        public ReadModel(ProContext db)
         {
             this.db = db;
         }
@@ -17,17 +17,12 @@ namespace pro_web.Pages.Activities
         private readonly ProContext db;
 
         [FromRoute]
-        public uint? ActivityId { get; set; }
+        public uint ActivityId { get; set; }
 
         public Models.Activity Activity { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
-            if (ActivityId == null)
-            {
-                return RedirectToPage("./Archive");
-            }
-
             Activity = await db.Activities.FindAsync(ActivityId);
             if (Activity == null)
             {
