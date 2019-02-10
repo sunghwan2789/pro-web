@@ -41,28 +41,28 @@ namespace pro_web.Services
 
         public string MountDrive => "S:";
 
-        public string GetSourcePath(TaskSource submission)
+        public string GetSourcePath(Submission submission)
         {
             var filename = $"{submission.TaskId}_{submission.AuthorId}_{submission.Sequence}.c";
             return Path.Combine(env.ContentRootPath, "storage", "sources", filename);
         }
 
-        public string GetMountFilename(TaskSource submission)
+        public string GetMountFilename(Submission submission)
         {
             return "Program.c";
         }
 
-        public string GetMountPath(TaskSource submission)
+        public string GetMountPath(Submission submission)
         {
             return Path.Combine(MountDrive, GetMountFilename(submission));
         }
 
-        public string GetCompileCommand(TaskSource submission)
+        public string GetCompileCommand(Submission submission)
         {
             return $"cl /nologo /O2 /TC /Za /utf-8 {GetMountFilename(submission)}";
         }
 
-        public string GetExecuteCommand(TaskSource submission)
+        public string GetExecuteCommand(Submission submission)
         {
             return "Program.exe";
         }
@@ -77,7 +77,7 @@ namespace pro_web.Services
                 using (var scope = scopeFactory.CreateScope())
                 {
                     var db = scope.ServiceProvider.GetRequiredService<ProContext>();
-                    workItem = await db.TaskSources.FindAsync(workItem.Id);
+                    workItem = await db.Submissions.FindAsync(workItem.Id);
 
                     var path = GetSourcePath(workItem);
                     File.Copy(path, Path.Combine(volume, GetMountFilename(workItem)));
@@ -107,12 +107,12 @@ namespace pro_web.Services
                         workItem.Error = await compileErrorTask;
                         if (p.ExitCode != 0)
                         {
-                            workItem.Status = TaskSource.StatusCode.CompilationError;
+                            workItem.Status = Submission.StatusCode.CompilationError;
                             goto SUBMIT;
                         }
                     }
 
-                    workItem.Status = TaskSource.StatusCode.PartialSuccess;
+                    workItem.Status = Submission.StatusCode.PartialSuccess;
                     await db.SaveChangesAsync();
 
                     // 프로그램 채점
@@ -151,7 +151,7 @@ namespace pro_web.Services
                             // 런타임 에러
                             if (p.ExitCode != 0)
                             {
-                                workItem.Status = TaskSource.StatusCode.RuntimeError;
+                                workItem.Status = Submission.StatusCode.RuntimeError;
                                 goto SUBMIT;
                             }
 
@@ -187,7 +187,7 @@ namespace pro_web.Services
                     }
 
                     // 모든 테스트를 통과한 정답
-                    workItem.Status = TaskSource.StatusCode.SuccessOrInitialization;
+                    workItem.Status = Submission.StatusCode.SuccessOrInitialization;
 
                 SUBMIT:
                     // 채점 완료
@@ -202,17 +202,17 @@ namespace pro_web.Services
 
     public interface ICompileAndGoQueue
     {
-        void QueueBackgroundWorkItem(TaskSource workItem);
+        void QueueBackgroundWorkItem(Submission workItem);
 
-        Task<TaskSource> DequeueAsync(CancellationToken cancellationToken);
+        Task<Submission> DequeueAsync(CancellationToken cancellationToken);
     }
 
     public class CompileAndGoQueue : ICompileAndGoQueue
     {
-        private ConcurrentQueue<TaskSource> _workItems = new ConcurrentQueue<TaskSource>();
+        private ConcurrentQueue<Submission> _workItems = new ConcurrentQueue<Submission>();
         private SemaphoreSlim _signal = new SemaphoreSlim(0);
 
-        public void QueueBackgroundWorkItem(TaskSource workItem)
+        public void QueueBackgroundWorkItem(Submission workItem)
         {
             //if (workItem == null)
             //{
@@ -223,7 +223,7 @@ namespace pro_web.Services
             _signal.Release();
         }
 
-        public async Task<TaskSource> DequeueAsync(CancellationToken cancellationToken)
+        public async Task<Submission> DequeueAsync(CancellationToken cancellationToken)
         {
             await _signal.WaitAsync(cancellationToken);
             _workItems.TryDequeue(out var workItem);

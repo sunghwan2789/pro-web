@@ -21,13 +21,13 @@ namespace pro_web.Pages.Submissions
         private readonly ProContext db;
         private readonly IHostingEnvironment env;
 
-        public Models.TaskSource Submission { get; set; }
+        public Models.Submission Submission { get; set; }
 
         public string Source { get; set; }
 
         public async Task<IActionResult> OnGetAsync(uint submissionId)
         {
-            Submission = await db.TaskSources.FindAsync(submissionId);
+            Submission = await db.Submissions.FindAsync(submissionId);
             if (Submission == null)
             {
                 return NotFound();
@@ -51,7 +51,7 @@ namespace pro_web.Pages.Submissions
             return Page();
         }
 
-        private Stream GetSourceStream(Models.TaskSource submission)
+        private Stream GetSourceStream(Models.Submission submission)
         {
             var filename = $"{submission.TaskId}_{submission.AuthorId}_{submission.Sequence}.c";
             var path = Path.Combine(env.ContentRootPath, "storage", "sources", filename);

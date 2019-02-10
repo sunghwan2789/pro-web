@@ -80,10 +80,10 @@
               {
                 @switch (submission.Status)
                 {
-                  case Models.TaskSource.StatusCode.SuccessOrInitialization:
+                  case Models.Submission.StatusCode.SuccessOrInitialization:
                     <td class="text-muted">채점 준비 중</td>
                     break;
-                  case Models.TaskSource.StatusCode.PartialSuccess:
+                  case Models.Submission.StatusCode.PartialSuccess:
                     <td class="text-warning">@(submission.Score)점 (채점 중)</td>
                     break;
                 }
@@ -92,16 +92,16 @@
               {
                 @switch (submission.Status)
                 {
-                  case Models.TaskSource.StatusCode.SuccessOrInitialization:
+                  case Models.Submission.StatusCode.SuccessOrInitialization:
                     <td class="text-success font-weight-bold">정답</td>
                     break;
-                  case Models.TaskSource.StatusCode.CompilationError:
+                  case Models.Submission.StatusCode.CompilationError:
                     <td class="text-info">컴파일 에러</td>
                     break;
-                  case Models.TaskSource.StatusCode.RuntimeError:
+                  case Models.Submission.StatusCode.RuntimeError:
                     <td class="text-info">런타임 에러</td>
                     break;
-                  case Models.TaskSource.StatusCode.PartialSuccess:
+                  case Models.Submission.StatusCode.PartialSuccess:
                     <td class="text-danger">@(submission.Score)점</td>
                     break;
                 }

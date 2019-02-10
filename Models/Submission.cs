@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace pro_web.Models
 {
-    public partial class TaskSource
+    public partial class Submission
     {
         public enum StatusCode
         {

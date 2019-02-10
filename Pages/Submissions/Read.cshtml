@@ -74,10 +74,10 @@
             {
               @switch (Model.Submission.Status)
               {
-                case Models.TaskSource.StatusCode.SuccessOrInitialization:
+                case Models.Submission.StatusCode.SuccessOrInitialization:
                   <td class="text-muted">채점 준비 중</td>
                   break;
-                case Models.TaskSource.StatusCode.PartialSuccess:
+                case Models.Submission.StatusCode.PartialSuccess:
                   <td class="text-warning">@(Model.Submission.Score)점 (채점 중)</td>
                   break;
               }
@@ -86,16 +86,16 @@
             {
               @switch (Model.Submission.Status)
               {
-                case Models.TaskSource.StatusCode.SuccessOrInitialization:
+                case Models.Submission.StatusCode.SuccessOrInitialization:
                   <td class="text-success font-weight-bold">정답</td>
                   break;
-                case Models.TaskSource.StatusCode.CompilationError:
+                case Models.Submission.StatusCode.CompilationError:
                   <td class="text-info">컴파일 에러</td>
                   break;
-                case Models.TaskSource.StatusCode.RuntimeError:
+                case Models.Submission.StatusCode.RuntimeError:
                   <td class="text-info">런타임 에러</td>
                   break;
-                case Models.TaskSource.StatusCode.PartialSuccess:
+                case Models.Submission.StatusCode.PartialSuccess:
                   <td class="text-danger">@(Model.Submission.Score)점</td>
                   break;
               }
@@ -117,15 +117,15 @@
   <script src="~/lib/codemirror/mode/clike/clike.js"></script>
   <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
   <script>
-        var code = CodeMirror.fromTextArea(document.getElementById('source'), {
-            indentUnit: 4,
-            mode: 'text/x-csrc',
-            lineNumbers: true,
-            viewportMargin: Infinity,
-            theme: 'mdn-like',
-            matchBrackets: true,
-            readOnly: true,
-        });
+    var code = CodeMirror.fromTextArea(document.getElementById('source'), {
+      indentUnit: 4,
+      mode: 'text/x-csrc',
+      lineNumbers: true,
+      viewportMargin: Infinity,
+      theme: 'mdn-like',
+      matchBrackets: true,
+      readOnly: true,
+    });
   </script>
 </body>
 </html>

@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.Extensions.Configuration;
 using pro_web.Models;
+using System;
 
 namespace pro_web
 {
@@ -23,7 +23,7 @@ namespace pro_web
         public virtual DbSet<MemberHistory> MemberHistory { get; set; }
         public virtual DbSet<MemberLog> MemberLogs { get; set; }
         public virtual DbSet<Member> Members { get; set; }
-        public virtual DbSet<TaskSource> TaskSources { get; set; }
+        public virtual DbSet<Submission> Submissions { get; set; }
         public virtual DbSet<TaskTest> TaskTests { get; set; }
         public virtual DbSet<Task> Tasks { get; set; }
 
@@ -225,7 +225,7 @@ namespace pro_web
                     .HasColumnType("char(60)");
             });
 
-            modelBuilder.Entity<TaskSource>(entity =>
+            modelBuilder.Entity<Submission>(entity =>
             {
                 entity.HasKey(e => e.Id)
                     .HasName("PRIMARY");
@@ -276,7 +276,7 @@ namespace pro_web
                     .HasConstraintName("pro_submit_ibfk_2");
 
                 entity.HasOne(d => d.Author)
-                    .WithMany(p => p.TaskSources)
+                    .WithMany(p => p.Submissions)
                     .HasForeignKey(d => d.AuthorId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("pro_submit_ibfk_1");

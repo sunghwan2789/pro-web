@@ -59,7 +59,7 @@ namespace pro_web.Pages.Submissions
             }
             path += i + ".c";
 
-            var submission = new Models.TaskSource
+            var submission = new Models.Submission
             {
                 Task = Task,
                 AuthorId = authorId,
@@ -75,7 +75,7 @@ namespace pro_web.Pages.Submissions
             }
             submission.Size = (uint)new FileInfo(path).Length;
 
-            db.TaskSources.Add(submission);
+            db.Submissions.Add(submission);
             await db.SaveChangesAsync();
 
             queue.QueueBackgroundWorkItem(submission);
