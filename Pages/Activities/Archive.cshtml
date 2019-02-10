@@ -78,7 +78,7 @@
         <div class="list-group">
             @foreach (var activity in Model.Activities)
             {
-                <a asp-page="./Index" asp-route-activityId="@activity.Id"
+                <a asp-page="./Read" asp-route-activityId="@activity.Id"
                    class="list-group-item list-group-item-action">
                     <h5 class="mb-1">
                         @activity.Summary
