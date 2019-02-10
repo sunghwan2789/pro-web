@@ -73,6 +73,7 @@ namespace pro_web
             app.UseMiddleware<BasePathMiddleware>();
 
             app.UseSession();
+            app.UseMiddleware<AuthenticateMiddleware>();
             app.UseMvc();
         }
     }
