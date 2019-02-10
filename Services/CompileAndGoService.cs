@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using pro_web.Extensions;
 using pro_web.Models;
 using System;
@@ -47,28 +48,18 @@ namespace pro_web.Services
             return Path.Combine(env.ContentRootPath, "storage", "sources", filename);
         }
 
-        public string GetMountFilename(Submission submission)
-        {
-            return "Program.c";
-        }
-
-        public string GetMountPath(Submission submission)
-        {
-            return Path.Combine(MountDrive, GetMountFilename(submission));
-        }
-
-        public string GetCompileCommand(Submission submission)
-        {
-            return $"cl /nologo /O2 /TC /Za /utf-8 {GetMountFilename(submission)}";
-        }
-
-        public string GetExecuteCommand(Submission submission)
-        {
-            return "Program.exe";
-        }
+        private CompileAndGo.ILanguageSdk GetLanguageSdkSpec(Submission submission)
+            => (CompileAndGo.ILanguageSdk)Activator.CreateInstance(Type.GetType(
+                $"pro_web.CompileAndGo.{submission.Language.ToString()}"));
 
         protected override async System.Threading.Tasks.Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            using (var scope = scopeFactory.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ProContext>();
+                db.Submissions.Where(i => i.Working).ToList().ForEach(Queue.QueueBackgroundWorkItem);
+            }
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 var workItem = await Queue.DequeueAsync(stoppingToken);
@@ -79,36 +70,40 @@ namespace pro_web.Services
                     var db = scope.ServiceProvider.GetRequiredService<ProContext>();
                     workItem = await db.Submissions.FindAsync(workItem.Id);
 
-                    var path = GetSourcePath(workItem);
-                    File.Copy(path, Path.Combine(volume, GetMountFilename(workItem)));
+                    var sdk = GetLanguageSdkSpec(workItem);
 
-                    using (var p = Process.Start(new ProcessStartInfo
+                    var path = GetSourcePath(workItem);
+                    File.Copy(path, Path.Combine(volume, sdk.SourceFilename));
+
+                    if (sdk is CompileAndGo.ICompiledLanguageSdk csdk)
                     {
-                        FileName = "docker",
-                        Arguments = string.Join(' ', new[] {
+                        using (var p = Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "docker",
+                            Arguments = string.Join(' ', new[] {
                             "run",
                             "-i",
                             "-a stdout",
                             "--rm",
                             "-v",
                             $"{volume}:{MountDrive}",
-                            "pro/compileandgo",
-                            $"cd /d {MountDrive} && {GetCompileCommand(workItem)} 2>&1"
+                            sdk.ImageName,
+                            $"cd /d {MountDrive} && {csdk.CompileCommand} 2>&1"
                         }),
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                        RedirectStandardOutput = true,
-                        StandardOutputEncoding = Encoding.UTF8,
-                    }))
-                    {
-                        await p.StandardOutput.ReadLineAsync();
-                        var compileErrorTask = p.StandardOutput.ReadToEndAsync();
-                        await p.WaitForExitAsync();
-                        workItem.Error = await compileErrorTask;
-                        if (p.ExitCode != 0)
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            RedirectStandardOutput = true,
+                            StandardOutputEncoding = Encoding.UTF8,
+                        }))
                         {
-                            workItem.Status = Submission.StatusCode.CompilationError;
-                            goto SUBMIT;
+                            var compileErrorTask = csdk.ProcessCompileErrorAsync(p.StandardOutput);
+                            await p.WaitForExitAsync();
+                            workItem.Error = await compileErrorTask;
+                            if (p.ExitCode != 0)
+                            {
+                                workItem.Status = Submission.StatusCode.CompilationError;
+                                goto SUBMIT;
+                            }
                         }
                     }
 
@@ -129,8 +124,8 @@ namespace pro_web.Services
                                 "--rm",
                                 "-v",
                                 $"{volume}:{MountDrive}",
-                                "pro/compileandgo",
-                                $"cd /d {MountDrive} && {GetExecuteCommand(workItem)} <in"
+                                sdk.ImageName,
+                                $"cd /d {MountDrive} && {sdk.ExecuteCommand} <in"
                             }),
                             UseShellExecute = false,
                             CreateNoWindow = true,
