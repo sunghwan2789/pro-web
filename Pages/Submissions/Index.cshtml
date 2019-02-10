@@ -1,4 +1,5 @@
 ﻿@page
+@using System.ComponentModel.DataAnnotations
 @model pro_web.Pages.Submissions.IndexModel
 <!DOCTYPE html>
 <html lang="ko">
@@ -51,6 +52,7 @@
             <th>제출한 사람</th>
             <th>과제</th>
             <th>채점 결과</th>
+            <th>언어</th>
             <th>길이</th>
             <th>제출한 시간</th>
           </tr>
@@ -106,6 +108,9 @@
                     break;
                 }
               }
+              <td>
+                @(submission.Language.GetType().GetMember(submission.Language.ToString())[0].GetCustomAttributes(true).OfType<DisplayAttribute>().First().Name)
+              </td>
               <td>
                 <a asp-page="./Read" asp-route-submissionId="@(submission.Id)">
                   @(submission.Size)B
