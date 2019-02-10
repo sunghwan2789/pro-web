@@ -25,9 +25,7 @@
                     </a>
                 </li>
             </ul>
-            <form class="form-inline" action="<?=$router->pathFor('logout')?>" method="post">
-                <button type="submit" class="btn btn-link text-muted" title="로그아웃"><i class="fas fa-sign-out-alt"></i></button>
-            </form>
+            <partial name="_LogoutPartial" />
         </div>
     </nav>
     <div class="container">
