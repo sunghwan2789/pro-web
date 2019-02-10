@@ -44,8 +44,7 @@ namespace pro_web.Services
 
         public string GetSourcePath(Submission submission)
         {
-            var filename = $"{submission.TaskId}_{submission.AuthorId}_{submission.Sequence}.c";
-            return Path.Combine(env.ContentRootPath, "storage", "sources", filename);
+            return Path.Combine(env.ContentRootPath, "storage", "sources", submission.Filename);
         }
 
         private CompileAndGo.ILanguageSdk GetLanguageSdkSpec(Submission submission)

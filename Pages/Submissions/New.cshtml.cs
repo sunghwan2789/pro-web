@@ -54,13 +54,15 @@ namespace pro_web.Pages.Submissions
 
             var authorId = (uint)HttpContext.Session.GetInt32("username");
 
-            var path = Path.Combine(env.ContentRootPath, "storage", "sources", $"{Task.Id}_{authorId}_");
+            var filename = $"{Task.Id}_{authorId}_";
+            var path = Path.Combine(env.ContentRootPath, "storage", "sources", filename);
             var i = 1;
-            while (System.IO.File.Exists(path + i + ".c"))
+            while (System.IO.File.Exists($"{path}{i}.{Language.ToString()}"))
             {
                 i++;
             }
-            path += i + ".c";
+            filename += $"{i}.{Language.ToString()}";
+            path += $"{i}.{Language.ToString()}";
 
             var submission = new Models.Submission
             {
@@ -70,6 +72,7 @@ namespace pro_web.Pages.Submissions
                 Working = true,
                 Error = "",
                 Language = Language,
+                Filename = filename,
             };
 
             using (var fs = new FileStream(path, FileMode.CreateNew, FileAccess.Write))

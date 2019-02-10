@@ -238,10 +238,6 @@ namespace pro_web
                 entity.HasIndex(e => e.AuthorId)
                     .HasName("uid");
 
-                entity.HasIndex(e => new { e.TaskId, e.AuthorId, e.Sequence })
-                    .HasName("tid_2")
-                    .IsUnique();
-
                 entity.Property(e => e.Id).HasColumnName("source_id");
 
                 entity.Property(e => e.SubmitAt)

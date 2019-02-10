@@ -1,12 +1,12 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace pro_web.Pages.Submissions
 {
@@ -53,8 +53,7 @@ namespace pro_web.Pages.Submissions
 
         private Stream GetSourceStream(Models.Submission submission)
         {
-            var filename = $"{submission.TaskId}_{submission.AuthorId}_{submission.Sequence}.c";
-            var path = Path.Combine(env.ContentRootPath, "storage", "sources", filename);
+            var path = Path.Combine(env.ContentRootPath, "storage", "sources", submission.Filename);
             return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
     }

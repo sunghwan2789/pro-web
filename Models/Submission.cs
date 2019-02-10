@@ -24,6 +24,7 @@ namespace pro_web.Models
         public string Error { get; set; }
         public bool Working { get; set; }
         public CompileAndGo.Languages Language { get; set; }
+        public string Filename { get; set; }
 
         public virtual Task Task { get; set; }
         public virtual Member Author { get; set; }
