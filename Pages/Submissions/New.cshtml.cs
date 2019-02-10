@@ -1,14 +1,14 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using pro_web.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using pro_web.Services;
 
 namespace pro_web.Pages.Submissions
 {
@@ -27,6 +27,9 @@ namespace pro_web.Pages.Submissions
 
         [FromRoute]
         public uint TaskId { get; set; }
+
+        [BindProperty]
+        public CompileAndGo.Languages Language { get; set; }
 
         public Models.Task Task { get; set; }
 
@@ -66,6 +69,7 @@ namespace pro_web.Pages.Submissions
                 Sequence = (uint)i,
                 Working = true,
                 Error = "",
+                Language = Language,
             };
 
             using (var fs = new FileStream(path, FileMode.CreateNew, FileAccess.Write))
