@@ -48,6 +48,16 @@ namespace pro_web
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddHostedService<CompileAndGoService>();
             services.AddSingleton<ICompileAndGoQueue, CompileAndGoQueue>();
+            services.AddSession(o =>
+            {
+                o.IdleTimeout = TimeSpan.FromDays(60);
+                o.Cookie = new CookieBuilder
+                {
+                    Name = "PRO_WEB_SESSION",
+                    HttpOnly = true,
+                    MaxAge = TimeSpan.FromDays(60),
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +72,7 @@ namespace pro_web
 
             app.UseMiddleware<BasePathMiddleware>();
 
+            app.UseSession();
             app.UseMvc();
         }
     }

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -95,7 +97,9 @@ namespace pro_web.Pages
             });
             await db.SaveChangesAsync();
 
-            // TODO: 세션 만들기
+            await HttpContext.Session.LoadAsync();
+            HttpContext.Session.SetInt32("username", (int)member.StudentNumber);
+            await HttpContext.Session.CommitAsync();
 
             return Redirect(ReturnUrl ?? $"{Request.PathBase}/");
         }
