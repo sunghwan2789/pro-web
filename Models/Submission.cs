@@ -23,6 +23,7 @@ namespace pro_web.Models
         public int Score { get; set; }
         public string Error { get; set; }
         public bool Working { get; set; }
+        public CompileAndGo.Languages Language { get; set; }
 
         public virtual Task Task { get; set; }
         public virtual Member Author { get; set; }
