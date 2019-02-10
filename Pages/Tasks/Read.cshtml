@@ -1,0 +1,106 @@
+﻿@page "{TaskId}"
+@model pro_web.Pages.Tasks.ReadModel
+@using Markdig
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>과제 - 프로</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="~/lib/@@fortawesome/fontawesome-free/css/all.min.css">
+  <style>
+    .console {
+      line-height: 1.14;
+      padding: .5rem;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <div class="container">
+      <a asp-page="/Index" class="navbar-brand">과제</a>
+      <ul class="navbar-nav mr-auto">
+        @if (Model.OnGoing)
+        {
+          <li class="nav-item active">
+            <a asp-page="./Index" class="nav-link">
+              진행 중
+            </a>
+          </li>
+          <li class="nav-item">
+            <a asp-page="./Archive" class="nav-link">
+              아카이브
+            </a>
+          </li>
+        }
+        else
+        {
+          <li class="nav-item">
+            <a asp-page="./Index" class="nav-link">
+              진행 중
+            </a>
+          </li>
+          <li class="nav-item active">
+            <a asp-page="./Archive" class="nav-link">
+              아카이브
+            </a>
+          </li>
+        }
+        <li class="nav-item">
+          <a asp-page="./New" class="nav-link">
+            게시
+          </a>
+        </li>
+      </ul>
+      <partial name="_LogoutPartial" />
+    </div>
+  </nav>
+  <div class="container mt-1 mb-3">
+    <nav class="nav nav-pills nav-justify">
+      <a asp-page="/Tasks/Read" asp-route-taskId="@Model.Task.Id"
+         class="nav-item nav-link active">
+        문제
+      </a>
+      <a asp-page="/Submissions/New" asp-route-taskId="@Model.Task.Id"
+         class="nav-item nav-link">
+        제출
+      </a>
+      <a asp-page="/Submissions/Index" asp-route-taskId="@Model.Task.Id"
+         class="nav-item nav-link">
+        채점 현황
+      </a>
+    </nav>
+  </div>
+  <div class="container">
+    <h2 class="mb-1">@Model.Task.Title</h2>
+    <div class="mb-3">
+      <i class="fas fa-calendar-alt" title="게시일"></i>
+      <time>@Model.Task.StartAt.ToString("yyyy-MM-dd")</time>
+
+      <i class="fas fa-calendar-check" title="마감일"></i>
+      @Model.Task.EndAt.ToString("yyyy-MM-dd")
+    </div>
+    <div class="mb-3" style="text-align: justify">
+      @Html.Raw(Markdown.ToHtml(
+          Model.Task.Content,
+          new MarkdownPipelineBuilder()
+              .UseAdvancedExtensions()
+              .UseBootstrap()
+              .UseSoftlineBreakAsHardlineBreak()
+              .Build()))
+    </div>
+    <aside class="row">
+      <div class="col-sm">
+        <h4>예시 입력</h4>
+        <pre class="console text-light bg-dark">@Model.Task.ExampleInput</pre>
+      </div>
+      <div class="col-sm">
+        <h4>예시 출력</h4>
+        <pre class="console text-light bg-dark">@Model.Task.ExampleOutput</pre>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>

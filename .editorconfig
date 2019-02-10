@@ -3,18 +3,22 @@
 # top-most EditorConfig file
 root = true
 
-[*.php]
+[*.cs]
 indent_style = space
 indent_size = 4
-end_of_line = lf
-charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.phtml]
+[*.cshtml]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{js,css}]
 indent_style = space
 indent_size = 2
 end_of_line = lf
-charset = utf-8
+charset=utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true

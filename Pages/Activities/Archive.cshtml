@@ -1,0 +1,101 @@
+﻿@page "{Year?}/{Month?}"
+@model pro_web.Pages.Activities.ArchiveModel
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>활동일지 - 프로</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="~/lib/@@fortawesome/fontawesome-free/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <div class="container">
+      <a asp-page="/Index" class="navbar-brand">활동일지</a>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a asp-page="./Archive" class="nav-link">
+            아카이브
+          </a>
+        </li>
+        <li class="nav-item">
+          <a asp-page="./New" class="nav-link">
+            작성
+          </a>
+        </li>
+      </ul>
+      <partial name="_LogoutPartial" />
+    </div>
+  </nav>
+  <div class="container">
+    <ul class="nav nav-pills justify-content-center">
+      @for (var i = 2015; i <= DateTime.Now.Year; i++)
+      {
+        <li class="nav-item">
+          @if (Model.Year == i)
+          {
+            <a asp-route-year="@i" class="nav-link active">
+              @i
+            </a>
+          }
+          else
+          {
+            <a asp-route-year="@i" class="nav-link">
+              @i
+            </a>
+          }
+        </li>
+      }
+    </ul>
+    @if (Model.Year.HasValue)
+    {
+      <ul class="nav nav-pills justify-content-center">
+        @for (var i = 1; i <= 12; i++)
+        {
+          <li class="nav-item">
+            @if (Model.Month == i)
+            {
+              <a asp-route-year="@Model.Year"
+                 asp-route-month="@i"
+                 class="nav-link active">
+                @i
+              </a>
+            }
+            else
+            {
+              <a asp-route-year="@Model.Year"
+                 asp-route-month="@i"
+                 class="nav-link">
+                @i
+              </a>
+            }
+          </li>
+        }
+      </ul>
+    }
+
+    <div class="list-group">
+      @foreach (var activity in Model.Activities)
+      {
+        <a asp-page="./Read" asp-route-activityId="@activity.Id"
+           class="list-group-item list-group-item-action">
+          <h5 class="mb-1">
+            @activity.Summary
+          </h5>
+          <div class="mb-0">
+            <i class="fas fa-users"></i>
+            @(activity.ActivityAttendees.Count)명
+
+            <i class="fas fa-location-arrow"></i>
+            @activity.Place
+
+            <i class="fas fa-calendar-alt"></i>
+            @activity.StartAt.ToString("yyyy-MM-dd")
+          </div>
+        </a>
+      }
+    </div>
+  </div>
+</body>
+</html>
