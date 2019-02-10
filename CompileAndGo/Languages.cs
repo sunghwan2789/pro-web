@@ -11,5 +11,7 @@ namespace pro_web.CompileAndGo
     {
         [Display(Name = "C (MSVC 14)", ShortName = ".c")]
         C_MSVC_14,
+        [Display(Name = "C++14 (MSVC 14)", ShortName = ".cpp")]
+        CPP14_MSVC_14,
     }
 }
