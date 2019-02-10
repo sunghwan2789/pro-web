@@ -84,10 +84,10 @@ namespace pro_web.Services
                             "-i",
                             "-a stdout",
                             "--rm",
-                            "-v",
-                            $"{volume}:{MountDrive}",
+                            $"-v {volume}:{MountDrive}",
+                            $"-w {MountDrive}\\",
                             sdk.ImageName,
-                            $"cd /d {MountDrive} && {csdk.CompileCommand} 2>&1"
+                            $"{csdk.CompileCommand} 2>&1"
                         }),
                             UseShellExecute = false,
                             CreateNoWindow = true,
@@ -121,10 +121,10 @@ namespace pro_web.Services
                                 "-i",
                                 "-a stdout",
                                 "--rm",
-                                "-v",
-                                $"{volume}:{MountDrive}",
+                                $"-v {volume}:{MountDrive}",
+                                $"-w {MountDrive}\\",
                                 sdk.ImageName,
-                                $"cd /d {MountDrive} && {sdk.ExecuteCommand} <in"
+                                $"{sdk.ExecuteCommand} <in"
                             }),
                             UseShellExecute = false,
                             CreateNoWindow = true,
