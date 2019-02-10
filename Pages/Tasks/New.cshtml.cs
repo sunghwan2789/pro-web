@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -19,14 +20,26 @@ namespace pro_web.Pages.Tasks
         [BindProperty]
         public Models.Task Task { get; set; }
 
-        public void OnGet()
+        public async Task<ActionResult> OnGetAsync()
         {
-            // TODO: 권한 확인
+            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
+            if (member.Authority != 0)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
+            else
+            {
+                return Page();
+            }
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // TODO: 권한 확인
+            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
+            if (member.Authority != 0)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
 
             if (!ModelState.IsValid)
             {

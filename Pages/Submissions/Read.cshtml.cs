@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -32,7 +33,16 @@ namespace pro_web.Pages.Submissions
                 return NotFound();
             }
 
-            // TODO: 마감 전 과제 소스코드 열람 제한
+            // 마감 전 과제 소스코드 열람 제한
+            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
+            if (
+                DateTime.Today <= Submission.Task.EndAt
+                && Submission.AuthorId != member.StudentNumber
+                && member.Authority != 0
+            )
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
 
             using (var sr = new StreamReader(GetSourceStream(Submission)))
             {

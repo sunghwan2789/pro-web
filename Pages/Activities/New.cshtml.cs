@@ -29,10 +29,14 @@ namespace pro_web.Pages.Activities
 
         public IFormFileCollection Attachments { get; set; }
 
-        public void OnGet()
+        public async Task<ActionResult> OnGetAsync()
         {
-            // TODO: 권한 확인
             // Authority 필드가 0, 즉, 관리자여야 한다.
+            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
+            if (member.Authority != 0)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
 
             // 회원을 최근 2개월 간 참여 횟수로 정렬
             Members = db.Members.OrderBy(i => i.Authority)
@@ -45,15 +49,34 @@ namespace pro_web.Pages.Activities
                 .ThenByDescending(i => i.Gen)
                 .ThenBy(i => i.StudentNumber)
                 .ToList();
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // TODO: 권한 확인
+            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
+            if (member.Authority != 0)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
 
             if (!ModelState.IsValid)
             {
                 return Page();
+            }
+
+            var activity = new Activity
+            {
+                Author = member,
+            };
+            if (!await TryUpdateModelAsync(activity, "Activity",
+                i => i.Content,
+                i => i.EndAt,
+                i => i.Place,
+                i => i.StartAt,
+                i => i.Summary))
+            {
+                return BadRequest();
             }
 
             foreach (var attachment in Attachments)
@@ -64,7 +87,7 @@ namespace pro_web.Pages.Activities
                 {
                     await attachment.CopyToAsync(fs);
                 }
-                Activity.Attachments.Add(new ActivityAttachment
+                activity.Attachments.Add(new ActivityAttachment
                 {
                     Filename = filename,
                     MediaType = attachment.ContentType,
@@ -75,18 +98,18 @@ namespace pro_web.Pages.Activities
 
             foreach (var attendeeStudentNumber in Request.Form["attend[]"].Select(uint.Parse))
             {
-                Activity.ActivityAttendees.Add(new ActivityAttendee
+                activity.ActivityAttendees.Add(new ActivityAttendee
                 {
                     AttandeeId = attendeeStudentNumber,
                 });
             }
 
-            await db.Activities.AddAsync(Activity);
+            await db.Activities.AddAsync(activity);
             await db.SaveChangesAsync();
 
             return RedirectToPage("./Index", new
             {
-                ActivityId = Activity.Id,
+                ActivityId = activity.Id,
             });
         }
     }

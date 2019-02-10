@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -48,8 +49,7 @@ namespace pro_web.Pages.Submissions
                 return NotFound();
             }
 
-            // TODO: ¼¼¼Ç
-            var authorId = 20154030u;
+            var authorId = (uint)HttpContext.Session.GetInt32("username");
 
             var path = Path.Combine(env.ContentRootPath, "storage", "sources", $"{Task.Id}_{authorId}_");
             var i = 1;

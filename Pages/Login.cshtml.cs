@@ -38,14 +38,21 @@ namespace pro_web.Pages
         [FromForm]
         public bool Persist { get; set; }
 
-        public void OnGet()
+        public ActionResult OnGet()
         {
+            // 로그인한 유저가 로그인 시도하면 차단
+            if (HttpContext.Session.Keys.Contains("username"))
+            {
+                return Redirect(ReturnUrl ?? $"{Request.PathBase}/");
+            }
+
             if (Registered)
             {
                 ViewData["Message"] = @"
                     <p>계정 설정을 완료했습니다.
                     <p>다시 로그인하세요.";
             }
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
