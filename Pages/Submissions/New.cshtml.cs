@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using pro_web.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -44,6 +45,11 @@ namespace pro_web.Pages.Submissions
             return Page();
         }
 
+        private string LanguageExtension
+            => typeof(CompileAndGo.Languages).GetMember(Language.ToString())[0]
+                .GetCustomAttributes(true).OfType<DisplayAttribute>().First()
+                    .ShortName;
+
         public async Task<IActionResult> OnPostAsync([FromForm] string source)
         {
             Task = await db.Tasks.FindAsync(TaskId);
@@ -54,15 +60,15 @@ namespace pro_web.Pages.Submissions
 
             var authorId = (uint)HttpContext.Session.GetInt32("username");
 
-            var filename = $"{Task.Id}_{authorId}_";
+            var filename = $"{Task.Id}_{authorId}_{Language.ToString()}";
             var path = Path.Combine(env.ContentRootPath, "storage", "sources", filename);
             var i = 1;
-            while (System.IO.File.Exists($"{path}{i}.{Language.ToString()}"))
+            while (System.IO.File.Exists($"{path}_{i}{LanguageExtension}"))
             {
                 i++;
             }
-            filename += $"{i}.{Language.ToString()}";
-            path += $"{i}.{Language.ToString()}";
+            filename += $"_{i}{LanguageExtension}";
+            path += $"_{i}{LanguageExtension}";
 
             var submission = new Models.Submission
             {
