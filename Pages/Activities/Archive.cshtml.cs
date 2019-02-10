@@ -17,7 +17,7 @@ namespace pro_web.Pages.Activities
         private readonly ProContext db;
 
         [FromRoute]
-        public int? Year { get; set; } = DateTime.Now.Year;
+        public int? Year { get; set; }// = DateTime.Now.Year;
 
         [FromRoute]
         public int? Month { get; set; }
