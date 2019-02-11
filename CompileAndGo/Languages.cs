@@ -15,5 +15,7 @@ namespace pro_web.CompileAndGo
         CPP14_MSVC_14,
         [Display(Name = "Java 8", ShortName = ".java")]
         JAVA_8,
+        [Display(Name = "Python 2", ShortName = ".py")]
+        PYTHON_2,
     }
 }
