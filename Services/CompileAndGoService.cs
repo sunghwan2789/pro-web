@@ -132,19 +132,22 @@ namespace pro_web.Services
                             StandardOutputEncoding = Encoding.UTF8,
                         }))
                         {
-                            var timeLimitTask = System.Threading.Tasks.Task.Delay(30_000);
                             var outputTask = p.StandardOutput.ReadToEndAsync();
-                            await System.Threading.Tasks.Task.WhenAny(timeLimitTask, p.WaitForExitAsync());
+                            var completed = await p.WaitForExitWithTimeoutAsync(30_000);
 
                             // 시간 초과
-                            if (timeLimitTask.Status == TaskStatus.RanToCompletion)
+                            if (!completed)
                             {
+                                p.Kill();
+                                await p.WaitForExitAsync();
+                                await outputTask;
                                 goto SUBMIT;
                             }
 
                             // 런타임 에러
                             if (p.ExitCode != 0)
                             {
+                                await outputTask;
                                 workItem.Status = Submission.StatusCode.RuntimeError;
                                 goto SUBMIT;
                             }
@@ -189,7 +192,16 @@ namespace pro_web.Services
                     await db.SaveChangesAsync();
                 }
 
-                Directory.Delete(volume, true);
+            CLEANUP:
+                try
+                {
+                    await System.Threading.Tasks.Task.Delay(1000);
+                    Directory.Delete(volume, true);
+                }
+                catch (IOException)
+                {
+                    goto CLEANUP;
+                }
             }
         }
     }
