@@ -10,8 +10,8 @@ namespace pro_web.CompileAndGo
     {
         public string ImageName => "pro/java-8";
         public string SourceFilename => "Program.java";
-        public string CompileCommand => $"javac -encoding utf-8 {SourceFilename}";
-        public string ExecuteCommand => "java Program";
+        public string CompileCommand => $"javac -encoding UTF-8 {SourceFilename}";
+        public string ExecuteCommand => "java -Dfile.encoding=UTF-8 -XX:+UseSerialGC -Xss64m -Xms1920m -Xmx1920m Program";
 
         public async Task<string> ProcessCompileErrorAsync(StreamReader sr)
         {

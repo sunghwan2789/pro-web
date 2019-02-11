@@ -10,7 +10,7 @@ namespace pro_web.CompileAndGo
     {
         public string ImageName => "pro/msvc-14";
         public string SourceFilename => "Program.cpp";
-        public string CompileCommand => $"cl /nologo /O2 /Za /utf-8 /std:c++14 /EHsc /TP {SourceFilename}";
+        public string CompileCommand => $"cl /nologo /O2 /Za /utf-8 /F 67108864 /std:c++14 /EHsc /TP {SourceFilename}";
         public string ExecuteCommand => "Program.exe";
 
         public async Task<string> ProcessCompileErrorAsync(StreamReader sr)

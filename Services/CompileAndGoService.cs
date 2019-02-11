@@ -80,15 +80,15 @@ namespace pro_web.Services
                         {
                             FileName = "docker",
                             Arguments = string.Join(' ', new[] {
-                            "run",
-                            "-i",
-                            "-a stdout",
-                            "--rm",
-                            $"-v {volume}:{MountDrive}",
-                            $"-w {MountDrive}\\",
-                            sdk.ImageName,
-                            $"{csdk.CompileCommand} 2>&1"
-                        }),
+                                "run",
+                                "-i",
+                                "-a stdout",
+                                "--rm",
+                                $"-v {volume}:{MountDrive}",
+                                $"-w {MountDrive}\\",
+                                sdk.ImageName,
+                                $"cmd /s /c {csdk.CompileCommand} 2>&1"
+                            }),
                             UseShellExecute = false,
                             CreateNoWindow = true,
                             RedirectStandardOutput = true,
@@ -124,7 +124,7 @@ namespace pro_web.Services
                                 $"-v {volume}:{MountDrive}",
                                 $"-w {MountDrive}\\",
                                 sdk.ImageName,
-                                $"{sdk.ExecuteCommand} <in"
+                                $"cmd /s /c {sdk.ExecuteCommand} <in"
                             }),
                             UseShellExecute = false,
                             CreateNoWindow = true,
