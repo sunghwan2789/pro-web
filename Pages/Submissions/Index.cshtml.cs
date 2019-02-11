@@ -24,11 +24,11 @@ namespace pro_web.Pages.Submissions
         [FromQuery]
         public uint? After { get; set; }
 
-        public IList<Models.TaskSource> Submissions { get; set; }
+        public IList<Models.Submission> Submissions { get; set; }
 
         public void OnGet()
         {
-            var query = db.TaskSources.AsQueryable();
+            var query = db.Submissions.AsQueryable();
             if (TaskId != null)
             {
                 query = query.Where(i => i.TaskId == TaskId.Value);

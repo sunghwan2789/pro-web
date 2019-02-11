@@ -11,7 +11,7 @@ namespace pro_web.Models
             ActivityAttendees = new HashSet<ActivityAttendee>();
             MemberHistory = new HashSet<MemberHistory>();
             MemberLogs = new HashSet<MemberLog>();
-            TaskSources = new HashSet<TaskSource>();
+            Submissions = new HashSet<Submission>();
         }
 
         public byte Gen { get; set; }
@@ -25,6 +25,6 @@ namespace pro_web.Models
         public virtual ICollection<ActivityAttendee> ActivityAttendees { get; set; }
         public virtual ICollection<MemberHistory> MemberHistory { get; set; }
         public virtual ICollection<MemberLog> MemberLogs { get; set; }
-        public virtual ICollection<TaskSource> TaskSources { get; set; }
+        public virtual ICollection<Submission> Submissions { get; set; }
     }
 }

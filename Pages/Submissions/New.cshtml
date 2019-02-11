@@ -1,8 +1,5 @@
 ﻿@page "{TaskId}"
 @model pro_web.Pages.Submissions.NewModel
-@{
-  var C_BASE = "#include <stdio.h>\n\nint main()\n{\n\treturn 0;\n}";
-}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -55,18 +52,25 @@
     <h3 class="mb-3">@Model.Task.Title</h3>
     <form id="submit" method="post">
       <div class="form-group">
-        <label for="language">
+        <label asp-for="Language">
           언어
         </label>
-        <select id="language" class="form-control">
-          <option>C (MSVC 14)</option>
-        </select>
+        <select asp-for="Language" asp-items="@(Html.GetEnumSelectList<CompileAndGo.Languages>())" class="form-control"></select>
       </div>
-      <div class="form-group">
+      <div class=" form-group">
         <label for="source">
           코드
         </label>
-        <textarea id="source" name="source" class="form-control text-monospace" wrap="off" rows="20" style="tab-size:4;">@C_BASE</textarea>
+        <textarea id="source" name="source" class="form-control text-monospace" wrap="off" rows="20" style="tab-size:4;">@{
+          var baseProgram = "";
+          switch (Model.Language)
+          {
+            case CompileAndGo.Languages.C_MSVC_14:
+              baseProgram = "#include <stdio.h>\n\nint main()\n{\n\treturn 0;\n}";
+              break;
+          }
+          @baseProgram
+        }</textarea>
       </div>
       <div class="form-group">
         <button type="submit" class="btn btn-primary btn-block">제출하기</button>
@@ -78,32 +82,19 @@
   <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
   <script src="~/lib/codemirror/addon/edit/closebrackets.js"></script>
   <script>
-        var code = CodeMirror.fromTextArea(document.getElementById('source'), {
-            indentUnit: 4,
-            mode: 'text/x-csrc',
-            lineNumbers: true,
-            viewportMargin: Infinity,
-            theme: 'mdn-like',
-            matchBrackets: true,
-            autoCloseBrackets: true,
-            indentWithTabs: true,
-        });
-        code.on('change', function () {
-            code.save();
-        });
-        // var saveTimer;
-        // $('textarea').on('input propertychange', function(e) {
-        //     clearTimeout(saveTimer);
-        //     saveTimer = setTimeout(function() {
-        //             // localStorage['pro_submit'] = $('textarea').val();
-        //             localStorage['pro_submit'] = code.getValue();
-        //         }, 1000);
-        // });
-        // if (localStorage['pro_submit'])
-        // {
-        //     // $('textarea').val(localStorage['pro_submit']);
-        //     code.setValue(localStorage['pro_submit']);
-        // }
+    var code = CodeMirror.fromTextArea(document.getElementById('source'), {
+      indentUnit: 4,
+      mode: 'text/x-csrc',
+      lineNumbers: true,
+      viewportMargin: Infinity,
+      theme: 'mdn-like',
+      matchBrackets: true,
+      autoCloseBrackets: true,
+      indentWithTabs: true,
+    });
+    code.on('change', function () {
+      code.save();
+    });
   </script>
 </body>
 </html>

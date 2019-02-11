@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace pro_web.Models
 {
-    public partial class TaskSource
+    public partial class Submission
     {
         public enum StatusCode
         {
@@ -23,6 +23,8 @@ namespace pro_web.Models
         public int Score { get; set; }
         public string Error { get; set; }
         public bool Working { get; set; }
+        public CompileAndGo.Languages Language { get; set; }
+        public string Filename { get; set; }
 
         public virtual Task Task { get; set; }
         public virtual Member Author { get; set; }

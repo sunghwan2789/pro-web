@@ -7,7 +7,7 @@ namespace pro_web.Models
     {
         public Task()
         {
-            Sources = new HashSet<TaskSource>();
+            Sources = new HashSet<Submission>();
             Tests = new HashSet<TaskTest>();
         }
 
@@ -21,7 +21,7 @@ namespace pro_web.Models
         public sbyte Hidden { get; set; }
         public DateTime? DeletedAt { get; set; }
 
-        public virtual ICollection<TaskSource> Sources { get; set; }
+        public virtual ICollection<Submission> Sources { get; set; }
         public virtual ICollection<TaskTest> Tests { get; set; }
     }
 }

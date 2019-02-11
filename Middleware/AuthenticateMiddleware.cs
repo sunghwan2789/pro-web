@@ -38,7 +38,10 @@ namespace pro_web.Middleware
             {
                 httpContext.Response.Redirect(
                     httpContext.Request.PathBase + "/login?returnUrl="
-                    + Uri.EscapeDataString(httpContext.Request.PathBase + httpContext.Request.Path));
+                    + Uri.EscapeDataString(
+                        httpContext.Request.PathBase
+                        + httpContext.Request.Path
+                        + httpContext.Request.QueryString));
             }
         }
 

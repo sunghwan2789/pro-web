@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using pro_web.Extensions;
 using pro_web.Models;
 using System;
@@ -41,34 +42,23 @@ namespace pro_web.Services
 
         public string MountDrive => "S:";
 
-        public string GetSourcePath(TaskSource submission)
+        public string GetSourcePath(Submission submission)
         {
-            var filename = $"{submission.TaskId}_{submission.AuthorId}_{submission.Sequence}.c";
-            return Path.Combine(env.ContentRootPath, "storage", "sources", filename);
+            return Path.Combine(env.ContentRootPath, "storage", "sources", submission.Filename);
         }
 
-        public string GetMountFilename(TaskSource submission)
-        {
-            return "Program.c";
-        }
-
-        public string GetMountPath(TaskSource submission)
-        {
-            return Path.Combine(MountDrive, GetMountFilename(submission));
-        }
-
-        public string GetCompileCommand(TaskSource submission)
-        {
-            return $"cl /nologo /O2 /TC /Za /utf-8 {GetMountFilename(submission)}";
-        }
-
-        public string GetExecuteCommand(TaskSource submission)
-        {
-            return "Program.exe";
-        }
+        private CompileAndGo.ILanguageSdk GetLanguageSdkSpec(Submission submission)
+            => (CompileAndGo.ILanguageSdk)Activator.CreateInstance(Type.GetType(
+                $"pro_web.CompileAndGo.{submission.Language.ToString()}"));
 
         protected override async System.Threading.Tasks.Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            using (var scope = scopeFactory.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ProContext>();
+                db.Submissions.Where(i => i.Working).ToList().ForEach(Queue.QueueBackgroundWorkItem);
+            }
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 var workItem = await Queue.DequeueAsync(stoppingToken);
@@ -77,42 +67,46 @@ namespace pro_web.Services
                 using (var scope = scopeFactory.CreateScope())
                 {
                     var db = scope.ServiceProvider.GetRequiredService<ProContext>();
-                    workItem = await db.TaskSources.FindAsync(workItem.Id);
+                    workItem = await db.Submissions.FindAsync(workItem.Id);
+
+                    var sdk = GetLanguageSdkSpec(workItem);
 
                     var path = GetSourcePath(workItem);
-                    File.Copy(path, Path.Combine(volume, GetMountFilename(workItem)));
+                    File.Copy(path, Path.Combine(volume, sdk.SourceFilename));
 
-                    using (var p = Process.Start(new ProcessStartInfo
+                    if (sdk is CompileAndGo.ICompiledLanguageSdk csdk)
                     {
-                        FileName = "docker",
-                        Arguments = string.Join(' ', new[] {
-                            "run",
-                            "-i",
-                            "-a stdout",
-                            "--rm",
-                            "-v",
-                            $"{volume}:{MountDrive}",
-                            "pro/compileandgo",
-                            $"cd /d {MountDrive} && {GetCompileCommand(workItem)} 2>&1"
-                        }),
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-                        RedirectStandardOutput = true,
-                        StandardOutputEncoding = Encoding.UTF8,
-                    }))
-                    {
-                        await p.StandardOutput.ReadLineAsync();
-                        var compileErrorTask = p.StandardOutput.ReadToEndAsync();
-                        await p.WaitForExitAsync();
-                        workItem.Error = await compileErrorTask;
-                        if (p.ExitCode != 0)
+                        using (var p = Process.Start(new ProcessStartInfo
                         {
-                            workItem.Status = TaskSource.StatusCode.CompilationError;
-                            goto SUBMIT;
+                            FileName = "docker",
+                            Arguments = string.Join(' ', new[] {
+                                "run",
+                                "-i",
+                                "-a stdout",
+                                "--rm",
+                                $"-v {volume}:{MountDrive}",
+                                $"-w {MountDrive}\\",
+                                sdk.ImageName,
+                                $"cmd /s /c {csdk.CompileCommand} 2>&1"
+                            }),
+                            UseShellExecute = false,
+                            CreateNoWindow = true,
+                            RedirectStandardOutput = true,
+                            StandardOutputEncoding = Encoding.UTF8,
+                        }))
+                        {
+                            var compileErrorTask = csdk.ProcessCompileErrorAsync(p.StandardOutput);
+                            await p.WaitForExitAsync();
+                            workItem.Error = await compileErrorTask;
+                            if (p.ExitCode != 0)
+                            {
+                                workItem.Status = Submission.StatusCode.CompilationError;
+                                goto SUBMIT;
+                            }
                         }
                     }
 
-                    workItem.Status = TaskSource.StatusCode.PartialSuccess;
+                    workItem.Status = Submission.StatusCode.PartialSuccess;
                     await db.SaveChangesAsync();
 
                     // 프로그램 채점
@@ -127,10 +121,10 @@ namespace pro_web.Services
                                 "-i",
                                 "-a stdout",
                                 "--rm",
-                                "-v",
-                                $"{volume}:{MountDrive}",
-                                "pro/compileandgo",
-                                $"cd /d {MountDrive} && {GetExecuteCommand(workItem)} <in"
+                                $"-v {volume}:{MountDrive}",
+                                $"-w {MountDrive}\\",
+                                sdk.ImageName,
+                                $"cmd /s /c {sdk.ExecuteCommand} <in"
                             }),
                             UseShellExecute = false,
                             CreateNoWindow = true,
@@ -138,20 +132,23 @@ namespace pro_web.Services
                             StandardOutputEncoding = Encoding.UTF8,
                         }))
                         {
-                            var timeLimitTask = System.Threading.Tasks.Task.Delay(30_000);
                             var outputTask = p.StandardOutput.ReadToEndAsync();
-                            await System.Threading.Tasks.Task.WhenAny(timeLimitTask, p.WaitForExitAsync());
+                            var completed = await p.WaitForExitWithTimeoutAsync(30_000);
 
                             // 시간 초과
-                            if (timeLimitTask.Status == TaskStatus.RanToCompletion)
+                            if (!completed)
                             {
+                                p.Kill();
+                                await p.WaitForExitAsync();
+                                await outputTask;
                                 goto SUBMIT;
                             }
 
                             // 런타임 에러
                             if (p.ExitCode != 0)
                             {
-                                workItem.Status = TaskSource.StatusCode.RuntimeError;
+                                await outputTask;
+                                workItem.Status = Submission.StatusCode.RuntimeError;
                                 goto SUBMIT;
                             }
 
@@ -187,7 +184,7 @@ namespace pro_web.Services
                     }
 
                     // 모든 테스트를 통과한 정답
-                    workItem.Status = TaskSource.StatusCode.SuccessOrInitialization;
+                    workItem.Status = Submission.StatusCode.SuccessOrInitialization;
 
                 SUBMIT:
                     // 채점 완료
@@ -195,24 +192,33 @@ namespace pro_web.Services
                     await db.SaveChangesAsync();
                 }
 
-                Directory.Delete(volume, true);
+            CLEANUP:
+                try
+                {
+                    await System.Threading.Tasks.Task.Delay(1000);
+                    Directory.Delete(volume, true);
+                }
+                catch (IOException)
+                {
+                    goto CLEANUP;
+                }
             }
         }
     }
 
     public interface ICompileAndGoQueue
     {
-        void QueueBackgroundWorkItem(TaskSource workItem);
+        void QueueBackgroundWorkItem(Submission workItem);
 
-        Task<TaskSource> DequeueAsync(CancellationToken cancellationToken);
+        Task<Submission> DequeueAsync(CancellationToken cancellationToken);
     }
 
     public class CompileAndGoQueue : ICompileAndGoQueue
     {
-        private ConcurrentQueue<TaskSource> _workItems = new ConcurrentQueue<TaskSource>();
+        private ConcurrentQueue<Submission> _workItems = new ConcurrentQueue<Submission>();
         private SemaphoreSlim _signal = new SemaphoreSlim(0);
 
-        public void QueueBackgroundWorkItem(TaskSource workItem)
+        public void QueueBackgroundWorkItem(Submission workItem)
         {
             //if (workItem == null)
             //{
@@ -223,7 +229,7 @@ namespace pro_web.Services
             _signal.Release();
         }
 
-        public async Task<TaskSource> DequeueAsync(CancellationToken cancellationToken)
+        public async Task<Submission> DequeueAsync(CancellationToken cancellationToken)
         {
             await _signal.WaitAsync(cancellationToken);
             _workItems.TryDequeue(out var workItem);
