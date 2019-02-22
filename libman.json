@@ -3,14 +3,14 @@
   "defaultProvider": "unpkg",
   "libraries": [
     {
-      "library": "bootstrap@4.2.1",
+      "library": "bootstrap@4.3.1",
       "destination": "wwwroot/lib/bootstrap/",
       "files": [
         "dist/css/bootstrap.min.css"
       ]
     },
     {
-      "library": "@fortawesome/fontawesome-free@5.6.3",
+      "library": "@fortawesome/fontawesome-free@5.7.2",
       "destination": "wwwroot/lib/@fortawesome/fontawesome-free/",
       "files": [
         "css/all.min.css",
@@ -47,7 +47,7 @@
       ]
     },
     {
-      "library": "codemirror@5.43.0",
+      "library": "codemirror@5.44.0",
       "destination": "wwwroot/lib/codemirror/"
     }
   ]
