@@ -1,6 +1,6 @@
 ﻿# escape=`
 
-FROM python:2-windowsservercore
+FROM python:3-windowsservercore
 
 SHELL ["cmd", "/S", "/C"]
 

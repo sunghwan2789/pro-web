@@ -17,5 +17,7 @@ namespace pro_web.CompileAndGo
         JAVA_8,
         [Display(Name = "Python 2", ShortName = ".py")]
         PYTHON_2,
+        [Display(Name = "Python 3", ShortName = ".py")]
+        PYTHON_3,
     }
 }
