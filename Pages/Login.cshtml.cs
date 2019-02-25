@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,9 +9,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace pro_web.Pages
 {
@@ -34,9 +34,6 @@ namespace pro_web.Pages
         [FromForm]
         [DataType(DataType.Password)]
         public string Password { get; set; }
-
-        [FromForm]
-        public bool Persist { get; set; }
 
         public ActionResult OnGet()
         {

@@ -111,14 +111,13 @@
   <form method="POST">
     <input asp-for="StudentNumber" placeholder="아이디">
     <input asp-for="Password" placeholder="비밀번호">
-    <label><input asp-for="Persist"> 로그인 상태 유지</label>
     <button type="submit">로그인</button>
   </form>
   <script>
-        document.querySelector('body').classList.add('js');
-        document.querySelector('aside button').addEventListener('click', function() {
-            this.parentNode.remove();
-        });
+    document.querySelector('body').classList.add('js');
+    document.querySelector('aside button').addEventListener('click', function () {
+      this.parentNode.remove();
+    });
   </script>
 </body>
 </html>
