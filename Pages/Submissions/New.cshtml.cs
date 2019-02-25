@@ -29,7 +29,7 @@ namespace pro_web.Pages.Submissions
         [FromRoute]
         public uint TaskId { get; set; }
 
-        [BindProperty]
+        [BindProperty(SupportsGet = true)]
         public CompileAndGo.Languages Language { get; set; }
 
         public Models.Task Task { get; set; }

@@ -79,12 +79,27 @@
   </div>
   <script src="~/lib/codemirror/lib/codemirror.js"></script>
   <script src="~/lib/codemirror/mode/clike/clike.js"></script>
+  <script src="~/lib/codemirror/mode/python/python.js"></script>
   <script src="~/lib/codemirror/addon/edit/matchbrackets.js"></script>
   <script src="~/lib/codemirror/addon/edit/closebrackets.js"></script>
   <script>
     var code = CodeMirror.fromTextArea(document.getElementById('source'), {
       indentUnit: 4,
-      mode: 'text/x-csrc',
+      @switch (Model.Language) {
+        case CompileAndGo.Languages.C_MSVC_14:
+          @:mode: 'text/x-csrc',
+          break;
+        case CompileAndGo.Languages.CPP14_MSVC_14:
+          @:mode: 'text/x-c++src',
+          break;
+        case CompileAndGo.Languages.JAVA_8:
+          @:mode: 'text/x-java',
+          break;
+        case CompileAndGo.Languages.PYTHON_2:
+        case CompileAndGo.Languages.PYTHON_3:
+          @:mode: 'text/x-python',
+          break;
+      }
       lineNumbers: true,
       viewportMargin: Infinity,
       theme: 'mdn-like',
@@ -94,6 +109,10 @@
     });
     code.on('change', function () {
       code.save();
+    });
+
+    document.getElementById('@Html.IdFor(i => i.Language)').addEventListener('change', function (e) {
+      location.search = '?language=' + e.target.value;
     });
   </script>
 </body>
