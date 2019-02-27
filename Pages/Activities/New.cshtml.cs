@@ -92,7 +92,7 @@ namespace pro_web.Pages.Activities
                 });
             }
 
-            await db.Activities.AddAsync(activity);
+            db.Activities.Add(activity);
             await db.SaveChangesAsync();
 
             return RedirectToPage("./Index", new

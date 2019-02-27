@@ -94,7 +94,7 @@ namespace pro_web.Pages
                 await db.SaveChangesAsync();
             }
 
-            await db.MemberLogs.AddAsync(new Models.MemberLog
+            db.MemberLogs.Add(new Models.MemberLog
             {
                 Member = member,
                 Text = "LOGIN",

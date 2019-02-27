@@ -57,7 +57,7 @@ namespace pro_web.Pages.Tasks
                 });
             }
 
-            await db.Tasks.AddAsync(task);
+            db.Tasks.Add(task);
             await db.SaveChangesAsync();
 
             return RedirectToPage("./Read", new
