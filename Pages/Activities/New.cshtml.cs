@@ -1,16 +1,18 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using pro_web.Filters;
+using pro_web.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using pro_web.Models;
 
 namespace pro_web.Pages.Activities
 {
+    [AuthorityFilter]
     public class NewModel : PageModel
     {
         public NewModel(ProContext db, IHostingEnvironment env)
@@ -29,15 +31,8 @@ namespace pro_web.Pages.Activities
 
         public IFormFileCollection Attachments { get; set; }
 
-        public async Task<ActionResult> OnGetAsync()
+        public void OnGet()
         {
-            // Authority 필드가 0, 즉, 관리자여야 한다.
-            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
-            if (member.Authority != 0)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden);
-            }
-
             // 회원을 최근 2개월 간 참여 횟수로 정렬
             Members = db.Members.OrderBy(i => i.Authority)
                 .ThenByDescending(i =>
@@ -49,17 +44,10 @@ namespace pro_web.Pages.Activities
                 .ThenByDescending(i => i.Gen)
                 .ThenBy(i => i.StudentNumber)
                 .ToList();
-            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
-            if (member.Authority != 0)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden);
-            }
-
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -67,7 +55,7 @@ namespace pro_web.Pages.Activities
 
             var activity = new Activity
             {
-                Author = member,
+                AuthorId = (uint)HttpContext.Session.GetInt32("username"),
             };
             if (!await TryUpdateModelAsync(activity, "Activity",
                 i => i.Content,
