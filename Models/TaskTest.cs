@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace pro_web.Models
 {
@@ -7,8 +8,13 @@ namespace pro_web.Models
     {
         public uint Id { get; set; }
         public uint TaskId { get; set; }
+
         public uint Score { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
         public string Input { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
         public string Output { get; set; }
 
         public virtual Task Task { get; set; }

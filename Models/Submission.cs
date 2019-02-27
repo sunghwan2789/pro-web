@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace pro_web.Models
 {
@@ -16,14 +17,24 @@ namespace pro_web.Models
         public uint Id { get; set; }
         public uint TaskId { get; set; }
         public uint AuthorId { get; set; }
+
         public uint Sequence { get; set; }
+
         public DateTime SubmitAt { get; set; }
+
         public uint Size { get; set; }
+
         public StatusCode Status { get; set; }
+
         public int Score { get; set; }
+
         public string Error { get; set; }
+
         public bool Working { get; set; }
+
         public CompileAndGo.Languages Language { get; set; }
+
+        [Required]
         public string Filename { get; set; }
 
         public virtual Task Task { get; set; }
