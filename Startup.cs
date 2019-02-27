@@ -57,6 +57,7 @@ namespace pro_web
                     Name = "PRO_WEB_SESSION",
                     HttpOnly = true,
                     MaxAge = TimeSpan.FromDays(60),
+                    SecurePolicy = CookieSecurePolicy.None,
                 };
             });
         }

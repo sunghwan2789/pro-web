@@ -1,13 +1,15 @@
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using pro_web.Filters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace pro_web.Pages.Tasks
 {
+    [AuthorityFilter]
     public class NewModel : PageModel
     {
         public NewModel(ProContext db)
@@ -20,27 +22,12 @@ namespace pro_web.Pages.Tasks
         [BindProperty]
         public Models.Task Task { get; set; }
 
-        public async Task<ActionResult> OnGetAsync()
+        public void OnGet()
         {
-            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
-            if (member.Authority != 0)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden);
-            }
-            else
-            {
-                return Page();
-            }
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
-            if (member.Authority != 0)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden);
-            }
-
             if (!ModelState.IsValid)
             {
                 return Page();
@@ -70,7 +57,7 @@ namespace pro_web.Pages.Tasks
                 });
             }
 
-            await db.Tasks.AddAsync(task);
+            db.Tasks.Add(task);
             await db.SaveChangesAsync();
 
             return RedirectToPage("./Read", new

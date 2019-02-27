@@ -1,11 +1,11 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace pro_web.Pages
 {
@@ -80,7 +80,7 @@ namespace pro_web.Pages
                 return Page();
             }
 
-            await db.MemberLogs.AddAsync(new Models.MemberLog
+            db.MemberLogs.Add(new Models.MemberLog
             {
                 Member = member,
                 Text = "INITIALIZE",
