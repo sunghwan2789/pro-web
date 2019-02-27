@@ -12,9 +12,9 @@ namespace pro_web.Filters
     /// <summary>
     /// 관리자 권한의 유저만 접근을 허용하는 필터
     /// </summary>
-    public class AuthorityFilterAttribute : ResultFilterAttribute
+    public class AuthorityFilterAttribute : Attribute, IAsyncPageFilter
     {
-        public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+        public async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context, PageHandlerExecutionDelegate next)
         {
             var db = context.HttpContext.RequestServices.GetService<ProContext>();
             var member = await db.Members.FindAsync((uint)context.HttpContext.Session.GetInt32("username"));
@@ -29,5 +29,7 @@ namespace pro_web.Filters
                 await next.Invoke();
             }
         }
+
+        public Task OnPageHandlerSelectionAsync(PageHandlerSelectedContext context) => Task.CompletedTask;
     }
 }
