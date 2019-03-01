@@ -11,8 +11,8 @@ namespace pro_web.Models
             ActivityAttendees = new HashSet<ActivityAttendee>();
         }
 
-        public uint Id { get; set; }
-        public uint AuthorId { get; set; }
+        public int Id { get; set; }
+        public int AuthorId { get; set; }
 
         public DateTime StartAt { get; set; }
 

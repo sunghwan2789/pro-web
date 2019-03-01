@@ -11,7 +11,7 @@ namespace pro_web.Models
             Tests = new HashSet<TaskTest>();
         }
 
-        public uint Id { get; set; }
+        public int Id { get; set; }
 
         public DateTime StartAt { get; set; }
 
@@ -25,7 +25,7 @@ namespace pro_web.Models
 
         public string ExampleOutput { get; set; }
 
-        public sbyte Hidden { get; set; }
+        public bool Hidden { get; set; }
 
         public DateTime? DeletedAt { get; set; }
 

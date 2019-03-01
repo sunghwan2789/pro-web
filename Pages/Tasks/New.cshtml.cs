@@ -51,7 +51,7 @@ namespace pro_web.Pages.Tasks
             {
                 task.Tests.Add(new Models.TaskTest
                 {
-                    Score = uint.Parse(Request.Form["test_score[]"][i]),
+                    Score = int.Parse(Request.Form["test_score[]"][i]),
                     Input = Request.Form["test_input[]"][i],
                     Output = Request.Form["test_output[]"][i],
                 });

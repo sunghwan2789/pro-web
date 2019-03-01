@@ -55,7 +55,7 @@ namespace pro_web.Pages.Activities
 
             var activity = new Activity
             {
-                AuthorId = (uint)HttpContext.Session.GetInt32("username"),
+                AuthorId = HttpContext.Session.GetInt32("username").Value,
             };
             if (!await TryUpdateModelAsync(activity, "Activity",
                 i => i.Content,
@@ -84,7 +84,7 @@ namespace pro_web.Pages.Activities
                 });
             }
 
-            foreach (var attendeeStudentNumber in Request.Form["attend[]"].Select(uint.Parse))
+            foreach (var attendeeStudentNumber in Request.Form["attend[]"].Select(int.Parse))
             {
                 activity.ActivityAttendees.Add(new ActivityAttendee
                 {

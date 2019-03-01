@@ -6,10 +6,10 @@ namespace pro_web.Models
 {
     public partial class TaskTest
     {
-        public uint Id { get; set; }
-        public uint TaskId { get; set; }
+        public int Id { get; set; }
+        public int TaskId { get; set; }
 
-        public uint Score { get; set; }
+        public int Score { get; set; }
 
         [Required(AllowEmptyStrings = true)]
         public string Input { get; set; }

@@ -58,7 +58,7 @@ namespace pro_web.Pages.Submissions
                 return NotFound();
             }
 
-            var authorId = (uint)HttpContext.Session.GetInt32("username");
+            var authorId = HttpContext.Session.GetInt32("username").Value;
 
             var filename = $"{Task.Id}_{authorId}_{Language.ToString()}";
             var path = Path.Combine(env.ContentRootPath, "storage", "sources", filename);
@@ -74,7 +74,7 @@ namespace pro_web.Pages.Submissions
             {
                 Task = Task,
                 AuthorId = authorId,
-                Sequence = (uint)i,
+                Sequence = i,
                 Working = true,
                 Error = "",
                 Language = Language,
@@ -86,7 +86,7 @@ namespace pro_web.Pages.Submissions
             {
                 await sw.WriteAsync(source);
             }
-            submission.Size = (uint)new FileInfo(path).Length;
+            submission.Size = new FileInfo(path).Length;
 
             db.Submissions.Add(submission);
             await db.SaveChangesAsync();

@@ -14,11 +14,11 @@ namespace pro_web.Models
             Submissions = new HashSet<Submission>();
         }
 
-        public byte Gen { get; set; }
-        public uint StudentNumber { get; set; }
+        public int Gen { get; set; }
+        public int StudentNumber { get; set; }
         public string Name { get; set; }
-        public uint PhoneNumber { get; set; }
-        public byte Authority { get; set; }
+        public int PhoneNumber { get; set; }
+        public int Authority { get; set; }
         public string Password { get; set; }
 
         public virtual ICollection<Activity> Activities { get; set; }

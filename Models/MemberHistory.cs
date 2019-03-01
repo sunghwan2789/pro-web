@@ -5,8 +5,8 @@ namespace pro_web.Models
 {
     public partial class MemberHistory
     {
-        public uint Id { get; set; }
-        public uint MemberId { get; set; }
+        public int Id { get; set; }
+        public int MemberId { get; set; }
         public string Content { get; set; }
         public DateTime OccurredAt { get; set; }
 

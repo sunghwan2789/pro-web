@@ -8,8 +8,8 @@ namespace pro_web.Models
 {
     public partial class ActivityAttachment
     {
-        public uint Id { get; set; }
-        public uint ActivityId { get; set; }
+        public int Id { get; set; }
+        public int ActivityId { get; set; }
 
         [Required]
         public string Filename { get; set; }

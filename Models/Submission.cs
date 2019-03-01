@@ -14,15 +14,15 @@ namespace pro_web.Models
             PartialSuccess = 3,
         }
 
-        public uint Id { get; set; }
-        public uint TaskId { get; set; }
-        public uint AuthorId { get; set; }
+        public int Id { get; set; }
+        public int TaskId { get; set; }
+        public int AuthorId { get; set; }
 
-        public uint Sequence { get; set; }
+        public int Sequence { get; set; }
 
         public DateTime SubmitAt { get; set; }
 
-        public uint Size { get; set; }
+        public long Size { get; set; }
 
         public StatusCode Status { get; set; }
 
