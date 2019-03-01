@@ -27,8 +27,6 @@ namespace pro_web.Models
 
         public bool Hidden { get; set; }
 
-        public DateTime? DeletedAt { get; set; }
-
         public virtual ICollection<Submission> Sources { get; set; }
         public virtual ICollection<TaskTest> Tests { get; set; }
     }

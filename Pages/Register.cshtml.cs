@@ -72,7 +72,7 @@ namespace pro_web.Pages
                 member == null
                 || member.Password != null
                 || member.Name != Name
-                || member.PhoneNumber != uint.Parse(Regex.Replace(PhoneNumber, "[^0-9]", ""))
+                || member.PhoneNumber != Regex.Replace(PhoneNumber, "[^0-9]", "")
             )
             {
                 ViewData["Message"] = $@"
@@ -83,7 +83,7 @@ namespace pro_web.Pages
             db.MemberLogs.Add(new Models.MemberLog
             {
                 Member = member,
-                Text = "INITIALIZE",
+                Content = "INITIALIZE",
             });
             await db.SaveChangesAsync();
 

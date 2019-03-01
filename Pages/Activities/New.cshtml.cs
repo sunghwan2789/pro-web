@@ -42,7 +42,7 @@ namespace pro_web.Pages.Activities
                     .Count()
                 )
                 .ThenByDescending(i => i.Gen)
-                .ThenBy(i => i.StudentNumber)
+                .ThenBy(i => i.Id)
                 .ToList();
         }
 
@@ -62,7 +62,7 @@ namespace pro_web.Pages.Activities
                 i => i.EndAt,
                 i => i.Place,
                 i => i.StartAt,
-                i => i.Summary))
+                i => i.Title))
             {
                 return BadRequest();
             }

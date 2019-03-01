@@ -97,12 +97,12 @@ namespace pro_web.Pages
             db.MemberLogs.Add(new Models.MemberLog
             {
                 Member = member,
-                Text = "LOGIN",
+                Content = "LOGIN",
             });
             await db.SaveChangesAsync();
 
             await HttpContext.Session.LoadAsync();
-            HttpContext.Session.SetInt32("username", (int)member.StudentNumber);
+            HttpContext.Session.SetInt32("username", member.Id);
             await HttpContext.Session.CommitAsync();
 
             return Redirect(ReturnUrl ?? $"{Request.PathBase}/");

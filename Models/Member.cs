@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace pro_web.Models
 {
@@ -14,11 +15,16 @@ namespace pro_web.Models
             Submissions = new HashSet<Submission>();
         }
 
+        public int Id { get; set; }
+
         public int Gen { get; set; }
-        public int StudentNumber { get; set; }
+
         public string Name { get; set; }
-        public int PhoneNumber { get; set; }
+
+        public string PhoneNumber { get; set; }
+
         public int Authority { get; set; }
+
         public string Password { get; set; }
 
         public virtual ICollection<Activity> Activities { get; set; }

@@ -96,7 +96,7 @@ namespace pro_web
 
             modelBuilder.Entity<Member>(entity =>
             {
-                entity.HasKey(e => e.StudentNumber);
+                entity.HasKey(e => e.Id);
             });
 
             modelBuilder.Entity<Submission>(entity =>

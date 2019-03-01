@@ -65,8 +65,8 @@
             <option></option>
             @foreach (var member in Model.Members)
             {
-              <option value="@member.StudentNumber">
-                @member.StudentNumber @(member.Gen)기 @member.Name
+              <option value="@member.Id">
+                @member.Id @(member.Gen)기 @member.Name
               </option>
             }
           </select>
@@ -74,7 +74,7 @@
         <ul id="attends"><li>누르면 지워집니다.</ul><!-- ul > li > input[name=attend[]] -->
       </div>
       <div class="form-group">
-        <label class="mb-0">목적: <input asp-for="Activity.Summary" class="form-control" required></label>
+        <label class="mb-0">목적: <input asp-for="Activity.Title" class="form-control" required></label>
       </div>
       <div class="form-group">
         <textarea asp-for="Activity.Content" id="content" class="form-control" placeholder="내용" rows="10"></textarea>

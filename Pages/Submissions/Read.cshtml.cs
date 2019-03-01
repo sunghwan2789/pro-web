@@ -37,7 +37,7 @@ namespace pro_web.Pages.Submissions
             var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
             if (
                 DateTime.Today <= Submission.Task.EndAt
-                && Submission.AuthorId != member.StudentNumber
+                && Submission.AuthorId != member.Id
                 && member.Authority != 0
             )
             {
