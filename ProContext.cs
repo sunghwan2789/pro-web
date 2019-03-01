@@ -32,7 +32,7 @@ namespace pro_web
             modelBuilder.Entity<ActivityAttachment>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.HasIndex(e => e.ActivityId).HasName("aid");
+                entity.HasIndex(e => e.ActivityId);
 
                 entity.HasOne(d => d.Activity)
                     .WithMany(p => p.Attachments)
@@ -43,8 +43,8 @@ namespace pro_web
             modelBuilder.Entity<ActivityAttendee>(entity =>
             {
                 entity.HasKey(e => new { e.ActivityId, e.AttandeeId });
-                entity.HasIndex(e => e.ActivityId).HasName("aid");
-                entity.HasIndex(e => e.AttandeeId).HasName("uid");
+                entity.HasIndex(e => e.ActivityId);
+                entity.HasIndex(e => e.AttandeeId);
 
                 entity.HasOne(d => d.Activity)
                     .WithMany(p => p.ActivityAttendees)
@@ -60,8 +60,8 @@ namespace pro_web
             modelBuilder.Entity<Activity>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.HasIndex(e => e.AuthorId).HasName("uid");
-                entity.HasIndex(e => new { e.StartAt, e.EndAt }).HasName("start");
+                entity.HasIndex(e => e.AuthorId);
+                entity.HasIndex(e => new { e.StartAt, e.EndAt });
 
                 entity.HasOne(d => d.Author)
                     .WithMany(p => p.Activities)
@@ -72,7 +72,7 @@ namespace pro_web
             modelBuilder.Entity<MemberHistory>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.HasIndex(e => e.MemberId).HasName("uid");
+                entity.HasIndex(e => e.MemberId);
 
                 entity.HasOne(d => d.Member)
                     .WithMany(p => p.MemberHistory)
@@ -83,7 +83,7 @@ namespace pro_web
             modelBuilder.Entity<MemberLog>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.HasIndex(e => e.MemberId).HasName("uid");
+                entity.HasIndex(e => e.MemberId);
 
                 entity.Property(e => e.OccurredAt)
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -102,8 +102,8 @@ namespace pro_web
             modelBuilder.Entity<Submission>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.HasIndex(e => e.TaskId).HasName("tid");
-                entity.HasIndex(e => e.AuthorId).HasName("uid");
+                entity.HasIndex(e => e.TaskId);
+                entity.HasIndex(e => e.AuthorId);
 
                 entity.Property(e => e.SubmitAt)
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -122,8 +122,8 @@ namespace pro_web
             modelBuilder.Entity<TaskTest>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.HasIndex(e => e.TaskId).HasName("task_id");
-                entity.HasIndex(e => new { e.TaskId, e.Score }).HasName("task_id_2");
+                entity.HasIndex(e => e.TaskId);
+                entity.HasIndex(e => new { e.TaskId, e.Score });
 
                 entity.HasOne(d => d.Task)
                     .WithMany(p => p.Tests)
@@ -134,9 +134,9 @@ namespace pro_web
             modelBuilder.Entity<Task>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.HasIndex(e => e.Hidden).HasName("block");
-                entity.HasIndex(e => e.EndAt).HasName("end");
-                entity.HasIndex(e => new { e.StartAt, e.EndAt }).HasName("start");
+                entity.HasIndex(e => e.Hidden);
+                entity.HasIndex(e => e.EndAt);
+                entity.HasIndex(e => new { e.StartAt, e.EndAt });
             });
         }
     }
