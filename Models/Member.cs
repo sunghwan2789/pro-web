@@ -15,6 +15,7 @@ namespace pro_web.Models
             Submissions = new HashSet<Submission>();
         }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
 
         public int Gen { get; set; }
