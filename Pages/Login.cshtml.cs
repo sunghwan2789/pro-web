@@ -29,7 +29,7 @@ namespace pro_web.Pages
 
         [FromForm]
         [DataType(DataType.Text)]
-        public uint? StudentNumber { get; set; }
+        public int? Id { get; set; }
 
         [FromForm]
         [DataType(DataType.Password)]
@@ -59,7 +59,7 @@ namespace pro_web.Pages
                 return Page();
             }
 
-            var member = await db.Members.FindAsync(StudentNumber);
+            var member = await db.Members.FindAsync(Id);
             if (member == null)
             {
                 ViewData["Message"] = @"
@@ -73,7 +73,7 @@ namespace pro_web.Pages
                 return RedirectToPage("./Register", new
                 {
                     ReturnUrl,
-                    StudentNumber,
+                    Id,
                 });
             }
 

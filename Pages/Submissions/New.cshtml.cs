@@ -27,7 +27,7 @@ namespace pro_web.Pages.Submissions
         private readonly ICompileAndGoQueue queue;
 
         [FromRoute]
-        public uint TaskId { get; set; }
+        public int TaskId { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public CompileAndGo.Languages Language { get; set; }

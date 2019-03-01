@@ -24,7 +24,7 @@ namespace pro_web.Pages
         [FromQuery]
         [Required]
         [DataType(DataType.Text)]
-        public uint StudentNumber { get; set; }
+        public int Id { get; set; }
 
         [FromForm]
         [Required]
@@ -67,7 +67,7 @@ namespace pro_web.Pages
                 return Page();
             }
 
-            var member = await db.Members.FindAsync(StudentNumber);
+            var member = await db.Members.FindAsync(Id);
             if (
                 member == null
                 || member.Password != null

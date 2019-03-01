@@ -1,10 +1,10 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 
 namespace pro_web.Pages.Submissions
 {
@@ -18,11 +18,11 @@ namespace pro_web.Pages.Submissions
         private readonly ProContext db;
 
         [FromQuery]
-        public uint? TaskId { get; set; }
+        public int? TaskId { get; set; }
         [FromQuery]
-        public uint? UserId { get; set; }
+        public int? UserId { get; set; }
         [FromQuery]
-        public uint? After { get; set; }
+        public int? After { get; set; }
 
         public IList<Models.Submission> Submissions { get; set; }
 

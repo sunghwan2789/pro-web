@@ -25,7 +25,7 @@ namespace pro_web.Pages.Submissions
 
         public string Source { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(uint submissionId)
+        public async Task<IActionResult> OnGetAsync(int submissionId)
         {
             Submission = await db.Submissions.FindAsync(submissionId);
             if (Submission == null)
@@ -34,7 +34,7 @@ namespace pro_web.Pages.Submissions
             }
 
             // 마감 전 과제 소스코드 열람 제한
-            var member = await db.Members.FindAsync((uint)HttpContext.Session.GetInt32("username"));
+            var member = await db.Members.FindAsync(HttpContext.Session.GetInt32("username"));
             if (
                 DateTime.Today <= Submission.Task.EndAt
                 && Submission.AuthorId != member.Id

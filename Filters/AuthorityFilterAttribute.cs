@@ -17,7 +17,7 @@ namespace pro_web.Filters
         public async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context, PageHandlerExecutionDelegate next)
         {
             var db = context.HttpContext.RequestServices.GetService<ProContext>();
-            var member = await db.Members.FindAsync((uint)context.HttpContext.Session.GetInt32("username"));
+            var member = await db.Members.FindAsync(context.HttpContext.Session.GetInt32("username"));
             // Authority 필드가 0, 즉, 관리자여야 한다.
             // 일반 유저라면 권한 없음 알림
             if (member.Authority != 0)

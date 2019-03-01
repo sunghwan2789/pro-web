@@ -1,11 +1,11 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace pro_web.Pages.Files
 {
@@ -20,7 +20,7 @@ namespace pro_web.Pages.Files
         private readonly ProContext db;
         private readonly IHostingEnvironment env;
 
-        public async Task<IActionResult> OnGetAsync(uint fileId)
+        public async Task<IActionResult> OnGetAsync(int fileId)
         {
             var file = await db.ActivityAttachments.FindAsync(fileId);
             if (file == null)
