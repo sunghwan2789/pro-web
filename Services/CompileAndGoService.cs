@@ -110,9 +110,11 @@ namespace pro_web.Services
                     await db.SaveChangesAsync();
 
                     // 프로그램 채점
+                    var testNumber = 1;
                     foreach (var test in workItem.Task.Tests.OrderBy(i => i.Score))
                     {
-                        await File.WriteAllTextAsync(Path.Combine(volume, "in"), test.Input);
+                        var inputFilename = $"in.{testNumber++}";
+                        await File.WriteAllTextAsync(Path.Combine(volume, inputFilename), test.Input);
                         using (var p = Process.Start(new ProcessStartInfo
                         {
                             FileName = "docker",
@@ -124,7 +126,7 @@ namespace pro_web.Services
                                 $"-v {volume}:{MountDrive}",
                                 $"-w {MountDrive}\\",
                                 sdk.ImageName,
-                                $"cmd /s /c {sdk.ExecuteCommand} <in"
+                                $"cmd /s /c {sdk.ExecuteCommand} <{inputFilename}"
                             }),
                             UseShellExecute = false,
                             CreateNoWindow = true,
