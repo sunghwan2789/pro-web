@@ -194,10 +194,16 @@ namespace pro_web.Services
                     await db.SaveChangesAsync();
                 }
 
+                var tries = 10;
             CLEANUP:
+                if (tries-- == 0)
+                {
+                    continue;
+                }
+
                 try
                 {
-                    await System.Threading.Tasks.Task.Delay(1000);
+                    await System.Threading.Tasks.Task.Delay(3000);
                     Directory.Delete(volume, true);
                 }
                 catch (IOException)
