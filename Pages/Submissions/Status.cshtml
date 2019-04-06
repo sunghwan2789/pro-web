@@ -1,0 +1,146 @@
+﻿@page "{taskId}"
+@model pro_web.Pages.Submissions.StatusModel
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>소스코드 - 프로</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="~/lib/@@fortawesome/fontawesome-free/css/all.min.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <div class="container">
+      <a asp-page="/Index" class="navbar-brand">소스코드</a>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a asp-page="./Index" class="nav-link">
+            검색
+          </a>
+        </li>
+      </ul>
+      <partial name="_LogoutPartial" />
+    </div>
+  </nav>
+  <div class="container mt-1 mb-3">
+    <nav class="nav nav-pills nav-justify">
+      <a asp-page="/Tasks/Read" asp-route-taskId="@Model.TaskId"
+          class="nav-item nav-link">
+        문제
+      </a>
+      <a asp-page="/Submissions/New" asp-route-taskId="@Model.TaskId"
+          class="nav-item nav-link">
+        제출
+      </a>
+      <a asp-page="/Submissions/Index" asp-route-taskId="@Model.TaskId"
+          class="nav-item nav-link">
+        채점 현황
+      </a>
+      <a asp-page="/Submissions/Status" asp-route-taskId="@Model.TaskId"
+          class="nav-item nav-link active">
+        제출 현황
+      </a>
+    </nav>
+  </div>
+  <div class="container">
+    <h3 class="mb-3">@(Model.Task.Title)</h3>
+    <div class="table-responsive">
+      <table class="table" style="white-space: nowrap">
+        <thead>
+          <tr>
+            <th>회원 이름</th>
+            <th>제출 횟수</th>
+            <th>최종 채점 결과</th>
+            <th>최단 길이</th>
+            <th>최종 제출 시간</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach (var m in Model.ActiveMembers)
+          {
+            var submissions = m.Submissions.Where(s => s.TaskId == Model.TaskId);
+            var count = submissions.Count();
+            if (count == 0)
+            {
+              <tr>
+                <td>
+                  <a asp-page="./Index" asp-route-userId="@(m.StudentNumber)">
+                    @(m.Gen)기 @(m.Name)
+                  </a>
+                </td>
+                <td colspan="4">
+                  미제출
+                </td>
+              </tr>
+            }
+            else
+            {
+              var finalStatus = submissions
+                .OrderByDescending(s => s.Score)
+                .ThenByDescending(s => s.SubmitAt)
+                .First();
+              var shortCode = submissions.OrderBy(s => s.Size).First();
+              var lastSubmit = submissions.OrderByDescending(s => s.SubmitAt).First();
+              <tr>
+                <td>
+                  <a asp-page="./Index" asp-route-userId="@(m.StudentNumber)">
+                    @(m.Gen)기 @(m.Name)
+                  </a>
+                </td>
+                <td>
+                  <a asp-page="./Index" asp-route-userId="@(m.StudentNumber)" asp-route-taskId="@(Model.TaskId)">
+                    @(count)회
+                  </a>
+                </td>
+                @if (finalStatus.Working)
+                {
+                  switch (finalStatus.Status)
+                  {
+                    case Models.Submission.StatusCode.SuccessOrInitialization:
+                      <td class="text-muted">채점 준비 중</td>
+                      break;
+                    case Models.Submission.StatusCode.PartialSuccess:
+                      <td class="text-warning">@(finalStatus.Score)점 (채점 중)</td>
+                      break;
+                  }
+                }
+                else
+                {
+                  switch (finalStatus.Status)
+                  {
+                    case Models.Submission.StatusCode.SuccessOrInitialization:
+                      <td class="text-success font-weight-bold">정답</td>
+                      break;
+                    case Models.Submission.StatusCode.CompilationError:
+                      <td class="text-info">컴파일 에러</td>
+                      break;
+                    case Models.Submission.StatusCode.RuntimeError:
+                      <td class="text-info">런타임 에러</td>
+                      break;
+                    case Models.Submission.StatusCode.PartialSuccess:
+                      <td class="text-danger">@(finalStatus.Score)점</td>
+                      break;
+                    case Models.Submission.StatusCode.TimeOut:
+                      <td class="text-info">시간 초과</td>
+                      break;
+                  }
+                }
+                <td>
+                  <a asp-page="./Read" asp-route-submissionId="@(shortCode.Id)">
+                    @(shortCode.Size)B
+                  </a>
+                </td>
+                <td>
+                  @(lastSubmit.SubmitAt.ToString("yyyy-MM-dd HH:mm:ss"))
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+
