@@ -11,6 +11,7 @@ namespace pro_web.Models
             CompilationError = 1,
             RuntimeError = 2,
             PartialSuccess = 3,
+            TimeOut = 4,
         }
 
         public uint Id { get; set; }

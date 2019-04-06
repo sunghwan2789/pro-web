@@ -143,6 +143,7 @@ namespace pro_web.Services
                                 p.Kill();
                                 await p.WaitForExitAsync();
                                 await outputTask;
+                                workItem.Status = Submission.StatusCode.TimeOut;
                                 goto SUBMIT;
                             }
 

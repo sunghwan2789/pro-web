@@ -106,6 +106,9 @@
                   case Models.Submission.StatusCode.PartialSuccess:
                     <td class="text-danger">@(submission.Score)점</td>
                     break;
+                  case Models.Submission.StatusCode.TimeOut:
+                    <td class="text-info">시간 초과</td>
+                    break;
                 }
               }
               <td>
