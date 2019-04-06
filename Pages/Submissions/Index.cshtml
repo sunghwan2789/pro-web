@@ -40,6 +40,10 @@
            class="nav-item nav-link active">
           채점 현황
         </a>
+        <a asp-page="/Submissions/Status" asp-route-taskId="@Model.TaskId"
+           class="nav-item nav-link">
+          제출 현황
+        </a>
       </nav>
     </div>
   }
