@@ -120,6 +120,11 @@
     </div>
     <textarea id="source" class="form-control text-monospace" wrap="off" rows="20" style="tab-size:4;" readonly>@Model.Source</textarea>
     <pre class="console text-dark bg-light">@Model.Submission.Error</pre>
+    <form asp-page="./Recheck" asp-route-submissionId="@(Model.Submission.Id)">
+      <button class="btn btn-primary btn-block mb-3" type="submit">
+        다시 채점하기
+      </button>
+    </form>
   </div>
   <script src="~/lib/codemirror/lib/codemirror.js"></script>
   <script src="~/lib/codemirror/mode/clike/clike.js"></script>
