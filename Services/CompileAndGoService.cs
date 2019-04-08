@@ -207,7 +207,7 @@ namespace pro_web.Services
                     await System.Threading.Tasks.Task.Delay(3000);
                     Directory.Delete(volume, true);
                 }
-                catch (IOException)
+                catch
                 {
                     goto CLEANUP;
                 }
