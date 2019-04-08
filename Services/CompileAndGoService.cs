@@ -96,9 +96,14 @@ namespace pro_web.Services
                         }))
                         {
                             var compileErrorTask = csdk.ProcessCompileErrorAsync(p.StandardOutput);
-                            await p.WaitForExitAsync();
+                            var completed = await p.WaitForExitWithTimeoutAsync(30_000);
+                            if (!completed)
+                            {
+                                p.Kill();
+                                await p.WaitForExitAsync();
+                            }
                             workItem.Error = await compileErrorTask;
-                            if (p.ExitCode != 0)
+                            if (!completed || p.ExitCode != 0)
                             {
                                 workItem.Status = Submission.StatusCode.CompilationError;
                                 goto SUBMIT;
@@ -207,7 +212,7 @@ namespace pro_web.Services
                     await System.Threading.Tasks.Task.Delay(3000);
                     Directory.Delete(volume, true);
                 }
-                catch (IOException)
+                catch
                 {
                     goto CLEANUP;
                 }
