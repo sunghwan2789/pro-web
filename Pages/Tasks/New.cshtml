@@ -9,6 +9,15 @@
   <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="~/lib/@@fortawesome/fontawesome-free/css/all.min.css">
   <link rel="stylesheet" href="~/lib/easymde/dist/easymde.min.css">
+  <style>
+    .console {
+      line-height: 1.14;
+      padding: .5rem;
+      overflow-x: auto;
+      font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size: 1rem;
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar navbar-expand navbar-dark bg-dark">
@@ -53,7 +62,7 @@
           <div class="form-group">
             <label class="d-block">
               예시 입력:
-              <textarea asp-for="Task.ExampleInput" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+              <textarea asp-for="Task.ExampleInput" class="console form-control text-light bg-dark" rows="6" wrap="off"></textarea>
             </label>
           </div>
         </div>
@@ -61,7 +70,7 @@
           <div class="form-group">
             <label class="d-block">
               예시 출력:
-              <textarea asp-for="Task.ExampleOutput" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+              <textarea asp-for="Task.ExampleOutput" class="console form-control text-light bg-dark" rows="6" wrap="off"></textarea>
             </label>
           </div>
         </div>
@@ -116,7 +125,7 @@
                             <div class="form-group">
                                 <label class="d-block">
                                     입력:
-                                    <textarea name="test_input[]" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+                                    <textarea name="test_input[]" class="console form-control text-light bg-dark" rows="6" wrap="off"></textarea>
                                 </label>
                             </div>
                         </div>
@@ -124,7 +133,7 @@
                             <div class="form-group">
                                 <label class="d-block">
                                     출력:
-                                    <textarea name="test_output[]" class="form-control text-light bg-dark" rows="6" wrap="off"></textarea>
+                                    <textarea name="test_output[]" class="console form-control text-light bg-dark" rows="6" wrap="off"></textarea>
                                 </label>
                             </div>
                         </div>
