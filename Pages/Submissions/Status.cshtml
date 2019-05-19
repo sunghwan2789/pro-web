@@ -80,7 +80,10 @@
                 .OrderByDescending(s => s.Score)
                 .ThenByDescending(s => s.SubmitAt)
                 .First();
-              var shortCode = submissions.OrderBy(s => s.Size).First();
+              var shortCode = submissions
+                .OrderByDescending(s => s.Score)
+                .ThenBy(s => s.Size)
+                .First();
               var lastSubmit = submissions.OrderByDescending(s => s.SubmitAt).First();
               <tr>
                 <td>
