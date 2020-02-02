@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="storage/**/.gitignore;docker/**/*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="storage/**/.gitignore;docker/**/*;build.cmd" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

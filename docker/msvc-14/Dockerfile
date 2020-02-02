@@ -11,5 +11,5 @@ RUN C:\TEMP\vs_buildtools.exe --quiet --wait --norestart --nocache --locale en-U
 #    --add Microsoft.VisualStudio.Component.Windows10SDK.17134 `
     --installPath C:\BuildTools
 
-ENTRYPOINT C:\BuildTools\Common7\Tools\VsDevCmd.bat > nul &&
-CMD ["cmd"]
+ADD VsDevCmd.bat C:\BuildTools\
+ENTRYPOINT C:\BuildTools\VsDevCmd.bat
