@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using pro_web.Extensions;
@@ -19,18 +20,17 @@ namespace pro_web.Services
     {
         public CompileAndGoService(
             ICompileAndGoQueue queue,
-            IHostingEnvironment env,
+            IWebHostEnvironment env,
             IServiceScopeFactory scopeFactory)
         {
             Queue = queue;
-            this.env = env;
-            this.scopeFactory = scopeFactory;
+            Environment = env;
+            ScopeFactory = scopeFactory;
         }
 
-        private readonly IHostingEnvironment env;
-        private readonly IServiceScopeFactory scopeFactory;
-
         public ICompileAndGoQueue Queue { get; }
+        private IWebHostEnvironment Environment { get; }
+        private IServiceScopeFactory ScopeFactory { get; }
 
         public string GetTemporaryDirectory()
         {
@@ -44,7 +44,7 @@ namespace pro_web.Services
 
         public string GetSourcePath(Submission submission)
         {
-            return Path.Combine(env.ContentRootPath, "storage", "sources", submission.Filename);
+            return Path.Combine(Environment.ContentRootPath, "storage", "sources", submission.Filename);
         }
 
         private CompileAndGo.ILanguageSdk GetLanguageSdkSpec(Submission submission)
@@ -53,7 +53,7 @@ namespace pro_web.Services
 
         protected override async System.Threading.Tasks.Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            using (var scope = scopeFactory.CreateScope())
+            using (var scope = ScopeFactory.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<ProContext>();
                 db.Submissions.Where(i => i.Working).ToList().ForEach(Queue.QueueBackgroundWorkItem);
@@ -64,7 +64,7 @@ namespace pro_web.Services
                 var workItem = await Queue.DequeueAsync(stoppingToken);
                 var volume = GetTemporaryDirectory();
 
-                using (var scope = scopeFactory.CreateScope())
+                using (var scope = ScopeFactory.CreateScope())
                 {
                     var db = scope.ServiceProvider.GetRequiredService<ProContext>();
                     workItem = await db.Submissions.FindAsync(workItem.Id);

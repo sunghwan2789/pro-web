@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using pro_web.Middleware;
 using pro_web.Services;
 using System;
@@ -18,10 +19,10 @@ namespace pro_web
     {
         public Startup(IConfiguration configuration)
         {
-            this.configuration = configuration;
+            Configuration = configuration;
         }
 
-        private readonly IConfiguration configuration;
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -31,7 +32,7 @@ namespace pro_web
 
             services.AddDbContext<ProContext>(options =>
                 options.UseLazyLoadingProxies()
-                    .UseMySql(configuration.GetConnectionString("DefaultConnection")));
+                    .UseMySql(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         public void ConfigureProductionServices(IServiceCollection services)
@@ -40,12 +41,12 @@ namespace pro_web
 
             services.AddDbContext<ProContext>(options =>
                 options.UseLazyLoadingProxies()
-                    .UseMySql(configuration.GetConnectionString("DefaultConnection")));
+                    .UseMySql(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         private void StartupConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddRazorPages();
             services.AddRouting(options => options.LowercaseUrls = true);
             services.AddHostedService<CompileAndGoService>();
             services.AddSingleton<ICompileAndGoQueue, CompileAndGoQueue>();
@@ -63,7 +64,7 @@ namespace pro_web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -76,7 +77,12 @@ namespace pro_web
 
             app.UseSession();
             app.UseMiddleware<AuthenticateMiddleware>();
-            app.UseMvc();
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+            });
         }
     }
 }

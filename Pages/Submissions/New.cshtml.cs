@@ -15,7 +15,7 @@ namespace pro_web.Pages.Submissions
 {
     public class NewModel : PageModel
     {
-        public NewModel(ProContext db, IHostingEnvironment env, ICompileAndGoQueue queue)
+        public NewModel(ProContext db, IWebHostEnvironment env, ICompileAndGoQueue queue)
         {
             this.db = db;
             this.env = env;
@@ -23,7 +23,7 @@ namespace pro_web.Pages.Submissions
         }
 
         private readonly ProContext db;
-        private readonly IHostingEnvironment env;
+        private readonly IWebHostEnvironment env;
         private readonly ICompileAndGoQueue queue;
 
         [FromRoute]

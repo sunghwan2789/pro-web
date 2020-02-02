@@ -11,14 +11,14 @@ namespace pro_web.Pages.Files
 {
     public class DownloadModel : PageModel
     {
-        public DownloadModel(ProContext db, IHostingEnvironment env)
+        public DownloadModel(ProContext db, IWebHostEnvironment env)
         {
             this.db = db;
             this.env = env;
         }
 
         private readonly ProContext db;
-        private readonly IHostingEnvironment env;
+        private readonly IWebHostEnvironment env;
 
         public async Task<IActionResult> OnGetAsync(uint fileId)
         {

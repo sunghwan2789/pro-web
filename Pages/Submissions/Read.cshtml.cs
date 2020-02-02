@@ -12,14 +12,14 @@ namespace pro_web.Pages.Submissions
 {
     public class ReadModel : PageModel
     {
-        public ReadModel(ProContext db, IHostingEnvironment env)
+        public ReadModel(ProContext db, IWebHostEnvironment env)
         {
             this.db = db;
             this.env = env;
         }
 
         private readonly ProContext db;
-        private readonly IHostingEnvironment env;
+        private readonly IWebHostEnvironment env;
 
         public Models.Submission Submission { get; set; }
 

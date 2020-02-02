@@ -15,14 +15,14 @@ namespace pro_web.Pages.Activities
     [AuthorityFilter]
     public class NewModel : PageModel
     {
-        public NewModel(ProContext db, IHostingEnvironment env)
+        public NewModel(ProContext db, IWebHostEnvironment env)
         {
             this.db = db;
             this.env = env;
         }
 
         private readonly ProContext db;
-        private readonly IHostingEnvironment env;
+        private readonly IWebHostEnvironment env;
 
         [BindProperty]
         public Activity Activity { get; set; }
